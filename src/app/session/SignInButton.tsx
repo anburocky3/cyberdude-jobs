@@ -27,7 +27,7 @@ export function SignInButton({ jobId }: { jobId?: string }) {
     <div className="flex flex-col items-center gap-3">
       <button
         onClick={handleApply}
-        className="inline-flex items-center rounded bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 cursor-pointer"
+        className="inline-flex items-center rounded  bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 cursor-pointer"
       >
         {isAuthenticated ? (
           "Apply Now"

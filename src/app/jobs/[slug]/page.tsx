@@ -5,7 +5,7 @@ import Link from "next/link";
 import Row from "./Row";
 import ShareJob from "@/components/ShareJob";
 import { Button } from "@/components/ui/button";
-import { Briefcase, ChevronLeft, MapPin } from "lucide-react";
+import { Briefcase, Building2Icon, ChevronLeft, MapPin } from "lucide-react";
 
 export default async function JobDetailPage({
   params,
@@ -19,7 +19,7 @@ export default async function JobDetailPage({
   const isExpired = job.status === "expired";
 
   return (
-    <main className="container mx-auto py-10 px-4">
+    <main className="container mx-auto py-5 sm:py-10 px-4">
       <Link href="/" className="text-sm text-orange-600">
         <Button
           variant="ghost"
@@ -34,13 +34,16 @@ export default async function JobDetailPage({
 
       {/* Hero */}
       <section className="mt-2 rounded-lg bg-gradient-to-r from-gray-50 to-white border p-6">
-        <div className="flex items-start justify-between gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-center items-start justify-center sm:justify-between gap-6">
           <div>
             <h1 className="text-3xl font-bold">{job.title}</h1>
-            <div className="flex items-center space-x-1 mt-1 text-gray-600">
-              <span className="">{job.company} · </span>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-1 mt-2 text-gray-600 space-y-1 sm:space-y-0">
               <div className="flex items-center space-x-1 ">
-                <MapPin className="h-4 w-4" />
+                <Building2Icon className="h-4 w-4 text-green-700" />
+                <span>{job.company}</span>
+              </div>
+              <div className="flex items-center space-x-1 ">
+                <MapPin className="h-4 w-4 text-yellow-700" />
                 <span>
                   {job.location} ({job.workMode})
                 </span>
@@ -101,17 +104,17 @@ export default async function JobDetailPage({
               )}
             </div> */}
           </div>
-          <div className="shrink-0 space-y-4">
-            <div className="flex items-center justify-center space-x-2">
-              {/* <Button variant="outline" size="sm">
+          <div className="shrink-0  ">
+            {/* <div className="flex items-center justify-center space-x-2"> */}
+            {/* <Button variant="outline" size="sm">
                 <Heart className="h-4 w-4 mr-2" />
                 Save
               </Button> */}
-              {/* <Button variant="outline" size="sm">
+            {/* <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button> */}
-            </div>
+            {/* </div> */}
             <SignInButton jobId={job.id} />
           </div>
         </div>
@@ -204,9 +207,9 @@ export default async function JobDetailPage({
           )}
 
           <section className="text-sm text-gray-700 bg-gray-50 border rounded p-4">
-            <div className="flex">
+            <div className="flex flex-col sm:flex-row">
               <strong>Note:</strong>
-              <p className="pl-2 flex-1">
+              <p className="sm:pl-2 flex-1">
                 Selections are based on skills, attitude, and merit — never on
                 recommendations, religion, caste, color, or personal
                 affiliations.

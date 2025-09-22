@@ -6,15 +6,15 @@ export default function JobsPage() {
   const internships = getJobsByType("internship");
 
   return (
-    <main className="container mx-auto py-10 px-4">
-      <section className="mb-10 text-center">
+    <main className="container mx-auto ">
+      <section className="mb-10 text-center bg-orange-50 py-10 px-4">
         <h1 className="text-3xl font-bold">Join CyberDude Jobs</h1>
         <p className="text-gray-700 mt-2">
           Explore full-time positions and our free, hands-on internship program.
         </p>
       </section>
 
-      <section className="mb-12">
+      <section className="pb-10 px-4 mb-12">
         <h2 className="text-2xl font-semibold mb-4">Full-time Roles</h2>
         <ul className="grid gap-4 sm:grid-cols-2">
           {fulltime.map((job) => (
@@ -74,7 +74,7 @@ export default function JobsPage() {
         </ul>
       </section>
 
-      <section>
+      <section className="pb-10 px-4 mb-12">
         <div className="mb-4">
           <h2 className="text-2xl font-semibold">Free Internship Program</h2>
           <p className="text-gray-700 mt-1">
