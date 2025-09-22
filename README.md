@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## CyberDude Jobs
 
-## Getting Started
+Modern job listings app with detailed job pages, LinkedIn login, and application flow.
 
-First, run the development server:
+### Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Job listings**: Full-time and internship sections with skills, openings, posted date, application deadline, and eligibility.
+- **Job details**: Overview, responsibilities, minimum/preferred qualifications, perks, skills, sidebar facts, and Apply/Expired logic.
+- **Apply with LinkedIn**: NextAuth integration for sign-in and a protected `/api/apply` endpoint.
+- **Share jobs**: Web Share API with WhatsApp, LinkedIn, Facebook, X, plus a Copy Link fallback (Instagram).
+- **Central data**: Roles are defined in `src/data/jobs.ts` with fields like `postedDate`, `whoCanApply`, `applicationDeadline`, `openings`, etc.
+
+### Tech Stack
+
+- Next.js App Router, React 19
+- NextAuth (LinkedIn provider)
+- Tailwind CSS (utility classes)
+- lucide-react icons
+
+### Getting Started
+
+1. Create `.env.local`
+
+```
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=replace-with-strong-secret
+LINKEDIN_CLIENT_ID=your-linkedin-client-id
+LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install and run
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm i
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Open the app
 
-## Learn More
+- Visit `/` to browse roles; click a job to view details and apply.
 
-To learn more about Next.js, take a look at the following resources:
+### Important Routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `/` home and listings
+- `/jobs/[slug]` job detail
+- `/api/auth/*` NextAuth routes
+- `/api/apply` protected apply endpoint (POST `{ jobId }`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Authentication Notes
 
-## Deploy on Vercel
+- Server-side can read secrets via `process.env.*`.
+- Client-side environment variables must be prefixed with `NEXT_PUBLIC_`.
+- The session provider is mounted in `src/app/providers.tsx`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Troubleshooting
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 405 or JSON parse error on `/api/auth/session`:
+
+  - Ensure `src/auth.ts` exports `GET` and `POST` from NextAuth and `src/app/api/auth/[...nextauth]/route.ts` re-exports them:
+    - `src/auth.ts` should have: `export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({...})`
+    - `src/app/api/auth/[...nextauth]/route.ts`: `export { GET, POST } from "@/auth";`
+  - Verify `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`; restart the dev server.
+
+- Hydration mismatch on share links:
+  - `src/components/ShareJob.tsx` defers reading `window.location` until mount to avoid SSR/CSR differences.
+
+### Author
+
+- Anbuselvan Annamalai - https://anbuselvan-annamalai.com
+- CyberDude Networks Pvt. Ltd. — https://cyberdudenetworks.com
+
+### License
+
+This project is licensed under the [MIT License](LICENSE). See `LICENSE` for details.
