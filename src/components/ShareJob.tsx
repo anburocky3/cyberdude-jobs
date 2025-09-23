@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { track } from "@vercel/analytics/react";
 import { Link as LinkIcon, Share2 } from "lucide-react";
 
 type Props = {
@@ -25,8 +26,10 @@ export default function ShareJob({ title, url, text }: Props) {
   const doNativeShare = useCallback(async () => {
     try {
       if (navigator.share) {
+        track("share_native_click", { title, url: shareUrl });
         await navigator.share({ title, text: shareText, url: shareUrl });
       } else {
+        track("share_copy_fallback", { url: shareUrl });
         await navigator.clipboard.writeText(shareUrl);
       }
     } catch {
@@ -157,6 +160,7 @@ export default function ShareJob({ title, url, text }: Props) {
 
   const handleCopy = async () => {
     try {
+      track("share_copy_click", { url: shareUrl });
       await navigator.clipboard.writeText(shareUrl);
     } catch {}
   };
@@ -191,6 +195,9 @@ export default function ShareJob({ title, url, text }: Props) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded border px-3 py-2 text-xs hover:bg-gray-50"
             title={`Share on ${name}!`}
+            onClick={() =>
+              track("share_network_click", { network: name, url: shareUrl })
+            }
           >
             {icon}
           </a>
