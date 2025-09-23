@@ -12,7 +12,7 @@ export default function JobList({ job }: { job: Job }) {
   return (
     <li key={job.id} className="border rounded p-5 hover:bg-gray-50">
       <Link href={`/jobs/${job.slug}`} className="block">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-x-4">
           <div>
             <h3 className="text-lg font-semibold">{job.title}</h3>
             <div className="flex items-center space-x-2 text-sm mt-2">

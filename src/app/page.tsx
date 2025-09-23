@@ -44,9 +44,9 @@ export default async function JobsPage() {
 
   return (
     <main className="">
-      <section className="mb-10 text-center bg-orange-50 py-10 px-4">
+      <section className="mb-10 text-center bg-gradient-to-tr from-zinc-800 to-zinc-950 text-white py-10 px-4">
         <h1 className="text-3xl font-bold">Join CyberDude Jobs</h1>
-        <p className="text-gray-700 mt-2">
+        <p className="text-gray-400 mt-2">
           Explore full-time positions and our free, hands-on internship program.
         </p>
         <Link
@@ -61,7 +61,7 @@ export default async function JobsPage() {
       </section>
 
       <div className="container mx-auto ">
-        <section className="pb-10 px-4 mb-12">
+        <section className="sm:pb-10 px-4 mb-12">
           <h2 className="text-2xl font-semibold mb-4">Full-time Roles</h2>
           <ul className="grid gap-4 sm:grid-cols-2">
             {fulltime.map((job) => (
@@ -70,7 +70,7 @@ export default async function JobsPage() {
           </ul>
         </section>
 
-        <section className="pb-10 px-4 mb-12">
+        <section className="sm:pb-10 px-4 mb-12">
           <div className="mb-4">
             <h2 className="text-2xl font-semibold">Free Internship Program</h2>
             <p className="text-gray-700 mt-1">
