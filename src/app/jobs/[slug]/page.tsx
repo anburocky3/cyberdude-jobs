@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { SignInButton } from "../../session/SignInButton";
-import { getJobBySlug } from "@/data/jobs";
+import { apiFetch } from "@/lib/api";
+import { formatDate, fromNow } from "@/lib/date";
 import Link from "next/link";
 import Row from "./Row";
 import ShareJob from "@/components/ShareJob";
@@ -13,10 +14,26 @@ export default async function JobDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const job = getJobBySlug(slug);
+  const job = await apiFetch(`/api/jobs/${slug}`, {
+    cache: "no-store",
+  }).then((r) => (r.ok ? r.json() : null));
+
   if (!job) return notFound();
 
   const isExpired = job.status === "expired";
+  const responsibilities = Array.isArray(job.responsibilities)
+    ? (job.responsibilities as string[])
+    : [job.description];
+  const minQualifications = Array.isArray(job.minQualifications)
+    ? (job.minQualifications as string[])
+    : undefined;
+  const preferredQualifications = Array.isArray(job.preferredQualifications)
+    ? (job.preferredQualifications as string[])
+    : undefined;
+  const perks = Array.isArray(job.perks) ? (job.perks as string[]) : undefined;
+  const skills = Array.isArray(job.skills)
+    ? (job.skills as string[])
+    : undefined;
 
   return (
     <main className="container mx-auto py-5 sm:py-10 px-4">
@@ -37,12 +54,13 @@ export default async function JobDetailPage({
         <div className="flex flex-col sm:flex-row sm:items-center items-start justify-center sm:justify-between gap-6">
           <div>
             <h1 className="text-3xl font-bold">{job.title}</h1>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-1 mt-2 text-gray-600 space-y-1 sm:space-y-0">
-              <div className="flex items-center space-x-1 ">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2  mt-2 text-gray-600 space-y-1 sm:space-y-0">
+              <div className="flex items-center space-x-2">
                 <Building2Icon className="h-4 w-4 text-green-700" />
                 <span>{job.company}</span>
               </div>
-              <div className="flex items-center space-x-1 ">
+              <div className="hidden sm:block">|</div>
+              <div className="flex items-center space-x-2 ">
                 <MapPin className="h-4 w-4 text-yellow-700" />
                 <span>
                   {job.location} ({job.workMode})
@@ -50,31 +68,15 @@ export default async function JobDetailPage({
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-3 ">
-              <div
-                className={`flex items-center space-x-1 px-2 py-1 rounded  
-                ${job.type === "fulltime" ? "bg-green-100 text-green-700" : ""}
-                ${
-                  job.type === "internship"
-                    ? "bg-indigo-100 text-indigo-700"
-                    : ""
-                }
-            `}
-              >
+              <div className="flex items-center px-4 bg-green-700 text-white rounded">
                 <Briefcase className="h-4 w-4" />
-                {job.type === "fulltime" && (
-                  <span className="bg-green-100 text-green-700 font-semibold px-2 py-1 rounded">
-                    Full Time
-                  </span>
-                )}
-                {job.type === "internship" && (
-                  <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded">
-                    Internship
-                  </span>
-                )}
+                <span className="px-2 py-1 rounded font-semibold">
+                  Full Time
+                </span>
               </div>
               {job.postedDate && (
                 <span className="text-gray-600">
-                  Posted on {job.postedDate}
+                  Posted {fromNow(job.postedDate)}
                 </span>
               )}
             </div>
@@ -135,7 +137,7 @@ export default async function JobDetailPage({
               Roles & Responsibilities
             </h2>
             <ul className="space-y-2 text-gray-700">
-              {(job.responsibilities || [job.description]).map((item, idx) => (
+              {responsibilities.map((item: string, idx: number) => (
                 <li key={idx} className="flex gap-2">
                   <span className="text-gray-400">•</span>
                   <span>{item}</span>
@@ -144,13 +146,13 @@ export default async function JobDetailPage({
             </ul>
           </section>
 
-          {job.minQualifications && (
+          {minQualifications && (
             <section>
               <h2 className="text-xl font-semibold mb-2">
                 Minimum Qualifications
               </h2>
               <ul className="space-y-2 text-gray-700">
-                {job.minQualifications.map((q) => (
+                {minQualifications.map((q: string) => (
                   <li key={q} className="flex gap-2">
                     <span className="text-gray-400">•</span>
                     <span>{q}</span>
@@ -160,13 +162,13 @@ export default async function JobDetailPage({
             </section>
           )}
 
-          {job.preferredQualifications && (
+          {preferredQualifications && (
             <section>
               <h2 className="text-xl font-semibold mb-2">
                 Preferred Qualifications
               </h2>
               <ul className="space-y-2 text-gray-700">
-                {job.preferredQualifications.map((q) => (
+                {preferredQualifications.map((q: string) => (
                   <li key={q} className="flex gap-2">
                     <span className="text-gray-400">•</span>
                     <span>{q}</span>
@@ -176,11 +178,11 @@ export default async function JobDetailPage({
             </section>
           )}
 
-          {job.perks && (
+          {perks && (
             <section>
               <h2 className="text-xl font-semibold mb-2">Job Perks</h2>
               <ul className="space-y-2 text-gray-700">
-                {job.perks.map((p) => (
+                {perks.map((p: string) => (
                   <li key={p} className="flex gap-2">
                     <span className="text-gray-400">•</span>
                     <span>{p}</span>
@@ -190,11 +192,11 @@ export default async function JobDetailPage({
             </section>
           )}
 
-          {job.skills && job.skills.length > 0 && (
+          {skills && skills.length > 0 && (
             <section>
               <h2 className="text-xl font-semibold mb-2">Skills</h2>
               <div className="flex flex-wrap gap-2">
-                {job.skills.map((skill) => (
+                {skills.map((skill: string) => (
                   <span
                     key={skill}
                     className="text-xs bg-gray-100 rounded px-2 py-1"
@@ -249,7 +251,7 @@ export default async function JobDetailPage({
               {job.applicationDeadline && (
                 <Row
                   label="Last date for applying"
-                  value={new Date(job.applicationDeadline).toDateString()}
+                  value={formatDate(job.applicationDeadline, "DD MMM, YY")}
                 />
               )}
               <Row

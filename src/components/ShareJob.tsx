@@ -10,7 +10,6 @@ type Props = {
 };
 
 export default function ShareJob({ title, url, text }: Props) {
-  const [copied, setCopied] = useState(false);
   const [shareUrl, setShareUrl] = useState<string>(url || "");
   const [mounted, setMounted] = useState(false);
 
@@ -29,10 +28,8 @@ export default function ShareJob({ title, url, text }: Props) {
         await navigator.share({ title, text: shareText, url: shareUrl });
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
       }
-    } catch (_) {
+    } catch {
       // no-op when user cancels share
     }
   }, [shareText, shareUrl, title]);
@@ -161,9 +158,7 @@ export default function ShareJob({ title, url, text }: Props) {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch (_) {}
+    } catch {}
   };
 
   return (

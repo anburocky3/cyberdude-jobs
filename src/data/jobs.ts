@@ -1,16 +1,16 @@
 export type JobType = "fulltime" | "internship";
 
 export type Job = {
-  id: string;
+  id: number;
   title: string;
   company: string;
   location: string;
   type: JobType;
   workSchedule?: string;
-  workMode?: string;
+  workMode: string;
   compensation?: string;
   description: string;
-  overview?: string;
+  overview: string;
   responsibilities?: string[];
   minQualifications?: string[];
   preferredQualifications?: string[];
@@ -32,13 +32,13 @@ export type Job = {
 export const jobs: Job[] = [
   // Full-time roles
   {
-    id: "ft-1",
+    id: 1,
     title: "Fullstack Engineer (5+ Years Experience)",
     company: "CyberDude Networks Pvt. Ltd.",
     location: "Chennai, India",
     type: "fulltime",
-    workSchedule: "Full-time, Monday to Friday",
-    workMode: "Hybrid",
+    workSchedule: "Full-time, Monday to Saturday",
+    workMode: "OnSite",
     compensation:
       "Best in industry, based on experience and skill set. Includes benefits and performance bonuses.",
     description:
@@ -83,13 +83,13 @@ export const jobs: Job[] = [
     slug: "fullstack-engineer-senior",
   },
   {
-    id: "ft-2",
+    id: 2,
     title: "Python AI Engineer (5+ Years Experience)",
     company: "CyberDude Networks Pvt. Ltd.",
     location: "Chennai, India",
     type: "fulltime",
     workSchedule: "Full-time, Monday to Friday",
-    workMode: "Hybrid",
+    workMode: "OnSite",
     compensation:
       "Best in industry, based on experience and skill set. Includes benefits and performance bonuses.",
     description:
@@ -127,13 +127,13 @@ export const jobs: Job[] = [
     slug: "python-ai-engineer-senior",
   },
   {
-    id: "ft-3",
+    id: 3,
     title: "UI/UX Engineer (3+ Years Experience)",
     company: "CyberDude Networks Pvt. Ltd.",
     location: "Chennai, India",
     type: "fulltime",
     workSchedule: "Full-time, Monday to Friday",
-    workMode: "Hybrid",
+    workMode: "OnSite",
     compensation:
       "Best in industry, based on experience and skill set. Includes benefits and performance bonuses.",
     description:
@@ -168,17 +168,18 @@ export const jobs: Job[] = [
       "Wireframing",
       "Prototyping",
     ],
-    slug: "ui-ux-engineer-mid",
+    slug: "ui-ux-engineer",
   },
 
   // Internships
   {
-    id: "int-1",
+    id: 4,
     title: "Fullstack Engineer Intern",
     company: "CyberDude Networks Pvt. Ltd.",
     location: "Chennai, India",
     type: "internship",
     openings: 2,
+    workMode: "Hybrid",
     description:
       "6-month, hands-on internship working with senior engineers on live projects.",
     overview:
@@ -210,12 +211,13 @@ export const jobs: Job[] = [
     slug: "fullstack-engineer-intern",
   },
   {
-    id: "int-2",
+    id: 5,
     title: "UI/UX Engineer Intern",
     company: "CyberDude Networks Pvt. Ltd.",
     location: "Chennai, India",
     type: "internship",
     openings: 2,
+    workMode: "Hybrid",
     description:
       "6-month internship focusing on wireframing, prototyping, and user research.",
     overview:
@@ -239,12 +241,13 @@ export const jobs: Job[] = [
     slug: "ui-ux-engineer-intern",
   },
   {
-    id: "int-3",
+    id: 6,
     title: "UAT Tester Intern",
     company: "CyberDude Networks Pvt. Ltd.",
     location: "Chennai, India",
     type: "internship",
     openings: 1,
+    workMode: "Hybrid",
     description:
       "Validate features, write test cases, and collaborate with QA on live products.",
     overview:
@@ -267,12 +270,13 @@ export const jobs: Job[] = [
     slug: "uat-tester-intern",
   },
   {
-    id: "int-4",
+    id: 7,
     title: "Content Creator Intern",
     company: "CyberDude Networks Pvt. Ltd.",
     location: "Chennai, India",
     type: "internship",
     openings: 2,
+    workMode: "Hybrid",
     description:
       "Create educational and marketing content across social and product channels.",
     overview:
@@ -295,12 +299,13 @@ export const jobs: Job[] = [
     slug: "content-creator-intern",
   },
   {
-    id: "int-5",
+    id: 8,
     title: "Business Analyst Intern",
     company: "CyberDude Networks Pvt. Ltd.",
     location: "Chennai, India",
     type: "internship",
     openings: 1,
+    workMode: "Hybrid",
     description:
       "Analyze requirements, map processes, and support product decision-making.",
     overview:
@@ -321,6 +326,61 @@ export const jobs: Job[] = [
     whoCanApply: "Students and fresh graduates interested in business analysis",
     skills: ["Requirements", "Process Mapping", "Communication"],
     slug: "business-analyst-intern",
+  },
+  {
+    id: 9,
+    title: "HR Intern",
+    company: "CyberDude Networks Pvt. Ltd.",
+    location: "Chennai, India",
+    type: "internship",
+    openings: 1,
+    workMode: "Hybrid",
+    description:
+      "Support HR operations: maintain employee records, assist recruitment and onboarding, and run people research initiatives.",
+    overview:
+      "Work closely with the HR team to manage day-to-day employee operations while conducting research on HR best practices, engagement programs, and process improvements.",
+    responsibilities: [
+      "Maintain and organize employee records (HRIS)",
+      "Assist in recruitment: sourcing, screening, scheduling",
+      "Coordinate onboarding and exit formalities",
+      "Draft and update HR policies and documentation",
+      "Run research on HR trends and engagement initiatives",
+      "Support performance review cycles and feedback collection",
+      "Prepare HR reports using Excel/Sheets",
+      "Assist with compliance documentation as guided",
+    ],
+    minQualifications: [
+      "Strong communication and interpersonal skills",
+      "Excellent organizational skills and attention to detail",
+      "Proficiency in MS Excel/Google Sheets",
+      "Basic understanding of HR concepts",
+    ],
+    preferredQualifications: [
+      "Familiarity with Indian labor laws",
+      "Experience with HR tools (HRIS/ATS)",
+      "Prior internship or campus HR experience",
+    ],
+    perks: ["Certificate and LoR", "Mentorship"],
+    team: "Human Resources",
+    startingDate: "Immediate",
+    minDuration: "6M",
+    expectedStipend: "Unpaid (learning-focused)",
+    applicationDeadline: "2025-12-31",
+    status: "open",
+    postedDate: "2025-09-15",
+    whoCanApply:
+      "Students or fresh graduates interested in HR, people ops, and research",
+    skills: [
+      "HRIS",
+      "Recruitment",
+      "Onboarding",
+      "People Operations",
+      "Research",
+      "Excel/Sheets",
+      "Documentation",
+      "Communication",
+    ],
+    slug: "hr-intern",
   },
 ];
 

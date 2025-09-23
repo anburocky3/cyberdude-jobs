@@ -1,0 +1,51 @@
+// Prisma schema for jobs
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum JobType {
+  fulltime
+  internship
+}
+
+enum JobStatus {
+  open
+  expired
+}
+
+model Job {
+  id                      Int        @id @default(autoincrement())
+  title                   String
+  company                 String
+  location                String
+  type                    JobType
+  workSchedule            String?    @db.VarChar(255)
+  workMode                String     @db.VarChar(255)
+  compensation            String?    @db.Text
+  description             String     @db.Text
+  overview                String?    @db.Text
+  responsibilities        Json?
+  minQualifications       Json?
+  preferredQualifications Json?
+  perks                   Json?
+  team                    String?    @db.VarChar(255)
+  startingDate            String?    @db.VarChar(255)
+  minDuration             String?    @db.VarChar(64)
+  expectedStipend         String?    @db.VarChar(255)
+  lastDate                String?    @db.VarChar(64)
+  applicationDeadline     String?    @db.VarChar(64)
+  status                  JobStatus?
+  postedDate              String?    @db.VarChar(64)
+  whoCanApply             String?    @db.Text
+  skills                  Json?
+  openings                Int?
+  slug                    String     @unique
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @updatedAt
+}

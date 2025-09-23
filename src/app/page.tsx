@@ -1,9 +1,17 @@
 import Link from "next/link";
-import { getJobsByType } from "@/data/jobs";
+import type { Job } from "@prisma/client";
+import { apiFetch } from "@/lib/api";
+import { ArrowRight, VideoIcon } from "lucide-react";
+import JobList from "@/components/job-list";
 
-export default function JobsPage() {
-  const fulltime = getJobsByType("fulltime");
-  const internships = getJobsByType("internship");
+export default async function JobsPage() {
+  const [allJobs] = await Promise.all([
+    apiFetch(`/api/jobs`, { cache: "no-store" }).then((r) => r.json()),
+  ]);
+
+  const jobs = (allJobs as Job[]) ?? [];
+  const fulltime = jobs.filter((j) => j.type === "fulltime");
+  const internships = jobs.filter((j) => j.type === "internship");
 
   return (
     <main className="">
@@ -12,6 +20,15 @@ export default function JobsPage() {
         <p className="text-gray-700 mt-2">
           Explore full-time positions and our free, hands-on internship program.
         </p>
+        <Link
+          href="https://bit.ly/cyberdudeYT"
+          target="_blank"
+          className="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-md flex items-center justify-center w-fit mx-auto gap-2 mt-4"
+        >
+          <VideoIcon className="w-4 h-4" />
+          <span>Learn Technology In Tamil</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </section>
 
       <div className="container mx-auto ">
@@ -19,58 +36,7 @@ export default function JobsPage() {
           <h2 className="text-2xl font-semibold mb-4">Full-time Roles</h2>
           <ul className="grid gap-4 sm:grid-cols-2">
             {fulltime.map((job) => (
-              <li key={job.id} className="border rounded p-5 hover:bg-gray-50">
-                <Link href={`/jobs/${job.slug}`} className="block">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-lg font-semibold">{job.title}</h3>
-                      <p className="text-gray-700">{job.company}</p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {job.workSchedule} · {job.workMode}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Posted{" "}
-                        {job.postedDate
-                          ? new Date(job.postedDate).toDateString()
-                          : "—"}
-                      </p>
-                      {job.whoCanApply && (
-                        <p className="text-xs text-gray-600 mt-1">
-                          Who can apply: {job.whoCanApply}
-                        </p>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <span className="block text-sm text-gray-600">
-                        {job.location}
-                      </span>
-                      {typeof job.openings === "number" && (
-                        <span className="block text-xs text-gray-500 mt-1">
-                          Openings: {job.openings}
-                        </span>
-                      )}
-                      {job.applicationDeadline && (
-                        <span className="block text-xs text-gray-500 mt-1">
-                          Apply by{" "}
-                          {new Date(job.applicationDeadline).toDateString()}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  {job.skills && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {job.skills.slice(0, 4).map((skill) => (
-                        <span
-                          key={skill}
-                          className="text-xs bg-gray-100 rounded px-2 py-1"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </Link>
-              </li>
+              <JobList key={job.id} job={job} />
             ))}
           </ul>
         </section>
@@ -85,47 +51,7 @@ export default function JobsPage() {
           </div>
           <ul className="grid gap-4 sm:grid-cols-2">
             {internships.map((job) => (
-              <li key={job.id} className="border rounded p-5 hover:bg-gray-50">
-                <Link href={`/jobs/${job.slug}`} className="block">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-lg font-semibold">{job.title}</h3>
-                      <p className="text-gray-700">{job.company}</p>
-                      {typeof job.openings === "number" && (
-                        <p className="text-sm text-gray-500 mt-1">
-                          Openings: {job.openings}
-                        </p>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        Posted{" "}
-                        {job.postedDate
-                          ? new Date(job.postedDate).toDateString()
-                          : "—"}
-                      </p>
-                      {job.whoCanApply && (
-                        <p className="text-xs text-gray-600 mt-1">
-                          Who can apply: {job.whoCanApply}
-                        </p>
-                      )}
-                    </div>
-                    <span className="text-sm text-gray-600">
-                      {job.location}
-                    </span>
-                  </div>
-                  {job.skills && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {job.skills.slice(0, 4).map((skill) => (
-                        <span
-                          key={skill}
-                          className="text-xs bg-gray-100 rounded px-2 py-1"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </Link>
-              </li>
+              <JobList key={job.id} job={job} />
             ))}
           </ul>
         </section>

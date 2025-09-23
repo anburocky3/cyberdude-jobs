@@ -2,7 +2,7 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
-export function SignInButton({ jobId }: { jobId?: string }) {
+export function SignInButton({ jobId }: { jobId?: number }) {
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated" && !!session?.user;
 
