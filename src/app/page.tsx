@@ -1,8 +1,37 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import type { Job } from "@prisma/client";
 import { apiFetch } from "@/lib/api";
 import { ArrowRight, VideoIcon } from "lucide-react";
 import JobList from "@/components/job-list";
+
+export const metadata: Metadata = {
+  title: "Find Tech Jobs and Internships",
+  description:
+    "Browse AI-powered listings for software jobs and free internships at CyberDude.",
+  openGraph: {
+    title: "Find Tech Jobs and Internships | CyberDude Jobs",
+    description:
+      "Browse AI-powered listings for software jobs and free internships at CyberDude.",
+    url: "/",
+    type: "website",
+    images: [
+      {
+        url: "/cyberdude-jobs-banner.png",
+        width: 1200,
+        height: 630,
+        alt: "CyberDude Jobs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Find Tech Jobs and Internships | CyberDude Jobs",
+    description:
+      "Browse AI-powered listings for software jobs and free internships at CyberDude.",
+    images: ["/cyberdude-jobs-banner.png"],
+  },
+};
 
 export default async function JobsPage() {
   const [allJobs] = await Promise.all([

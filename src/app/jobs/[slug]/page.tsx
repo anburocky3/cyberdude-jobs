@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { SignInButton } from "../../session/SignInButton";
 import { apiFetch } from "@/lib/api";
 import { formatDate, fromNow } from "@/lib/date";
@@ -7,13 +8,14 @@ import Row from "./Row";
 import ShareJob from "@/components/ShareJob";
 import { Button } from "@/components/ui/button";
 import { Briefcase, Building2Icon, ChevronLeft, MapPin } from "lucide-react";
+import { Job } from "@prisma/client";
 
 export default async function JobDetailPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = await params;
+  const { slug } = params;
   const job = await apiFetch(`/api/jobs/${slug}`, {
     cache: "no-store",
   }).then((r) => (r.ok ? r.json() : null));
@@ -36,12 +38,12 @@ export default async function JobDetailPage({
     : undefined;
 
   return (
-    <main className="container mx-auto py-5 sm:py-10 px-4">
+    <main className="container mx-auto py-3 sm:py-5 px-4">
       <Link href="/" className="text-sm text-orange-600">
         <Button
           variant="ghost"
           size="sm"
-          className="mb-4 cursor-pointer"
+          className="mb-1 cursor-pointer"
           title="Return to jobs"
         >
           <ChevronLeft className="h-4 w-4 mr-2" />
@@ -106,7 +108,7 @@ export default async function JobDetailPage({
               )}
             </div> */}
           </div>
-          <div className="shrink-0  ">
+          <div className="shrink-0  text-center">
             {/* <div className="flex items-center justify-center space-x-2"> */}
             {/* <Button variant="outline" size="sm">
                 <Heart className="h-4 w-4 mr-2" />
@@ -118,6 +120,15 @@ export default async function JobDetailPage({
               </Button> */}
             {/* </div> */}
             <SignInButton jobId={job.id} />
+            {job.type === "internship" && (
+              <button
+                type="button"
+                className="text-gray-600 text-sm mt-2 hover:underline cursor-pointer"
+                title="Read before applying for this program."
+              >
+                Terms & Conditions
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -270,4 +281,57 @@ export default async function JobDetailPage({
       </div>
     </main>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const { slug } = params;
+  const job: Job | null = await apiFetch(`/api/jobs/${slug}`, {
+    cache: "no-store",
+  }).then((r) => (r.ok ? r.json() : null));
+
+  if (!job) {
+    return {
+      title: "Job not found",
+      description: "The requested job could not be found.",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const title = `${job.title} at ${job.company}`;
+  const description =
+    job.overview ||
+    job.description ||
+    `${job.company} is hiring for ${job.title}.`;
+  const ogImage = "/cyberdude-jobs-banner.png";
+  const canonical = `/jobs/${job.slug}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url: canonical,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+  };
 }
