@@ -1,8 +1,11 @@
+"use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LinkIcon } from "lucide-react";
+import { LinkIcon, LogOutIcon } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 
 export function Header() {
+  const { status } = useSession();
   return (
     <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -43,15 +46,28 @@ export function Header() {
         </nav> */}
 
         <div className="flex items-center space-x-4">
-          {/* <Button variant="outline" size="sm">
-            Sign In
-          </Button> */}
           <Button asChild size="sm" title="Navigate to cyberdudenetworks.com">
             <Link href="https://cyberdudenetworks.com" target="_blank">
               <LinkIcon className="" />
               Visit Website
             </Link>
           </Button>
+          {status === "authenticated" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (window.confirm("Are you sure you want to log out?")) {
+                  signOut({ callbackUrl: "/" });
+                }
+              }}
+              title={`Logout`}
+              className="cursor-pointer"
+            >
+              <LogOutIcon className="w-4 h-4" />
+              Logout
+            </Button>
+          )}
         </div>
       </div>
     </header>
