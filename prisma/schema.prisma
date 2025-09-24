@@ -20,32 +20,65 @@ enum JobStatus {
 }
 
 model Job {
-  id                      Int        @id @default(autoincrement())
+  id                      Int           @id @default(autoincrement())
   title                   String
   company                 String
   location                String
   type                    JobType
-  workSchedule            String?    @db.VarChar(255)
-  workMode                String     @db.VarChar(255)
-  compensation            String?    @db.Text
-  description             String     @db.Text
-  overview                String?    @db.Text
+  workSchedule            String?       @db.VarChar(255)
+  workMode                String        @db.VarChar(255)
+  compensation            String?       @db.Text
+  description             String        @db.Text
+  overview                String?       @db.Text
   responsibilities        Json?
   minQualifications       Json?
   preferredQualifications Json?
   perks                   Json?
-  team                    String?    @db.VarChar(255)
-  startingDate            String?    @db.VarChar(255)
-  minDuration             String?    @db.VarChar(64)
-  expectedStipend         String?    @db.VarChar(255)
-  lastDate                String?    @db.VarChar(64)
-  applicationDeadline     String?    @db.VarChar(64)
+  team                    String?       @db.VarChar(255)
+  startingDate            String?       @db.VarChar(255)
+  minDuration             String?       @db.VarChar(64)
+  expectedStipend         String?       @db.VarChar(255)
+  lastDate                String?       @db.VarChar(64)
+  applicationDeadline     String?       @db.VarChar(64)
   status                  JobStatus?
-  postedDate              String?    @db.VarChar(64)
-  whoCanApply             String?    @db.Text
+  postedDate              String?       @db.VarChar(64)
+  whoCanApply             String?       @db.Text
   skills                  Json?
   openings                Int?
-  slug                    String     @unique
-  createdAt               DateTime   @default(now())
-  updatedAt               DateTime   @updatedAt
+  slug                    String        @unique
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  applications            Application[]
+}
+
+model Application {
+  id                         Int      @id @default(autoincrement())
+  jobId                      Int
+  job                        Job      @relation(fields: [jobId], references: [id])
+  userEmail                  String
+  userName                   String?
+  profileImage               String?  @db.Text
+  gender                     String
+  dateOfBirth                String
+  mobileNo                   String
+  currentStatus              String
+  country                    String
+  state                      String
+  city                       String
+  linkedin                   String
+  portfolio                  String?
+  educationSchool            String
+  educationSchoolPercentage  Float
+  educationCollege           String
+  educationCollegePercentage Float
+  workedAlready              Boolean
+  companyName                String?
+  skills                     Json
+  resumeUrl                  String?  @db.Text
+  reasonToJoin               String   @db.Text
+  excitedAboutStartup        String   @db.Text
+  cameFrom                   String
+  acceptCondition            Boolean
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 }
