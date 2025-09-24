@@ -226,38 +226,44 @@ export default function ApplyPage({
   const workedAlready = methods.watch("workedAlready");
 
   // Simple datasets for cascading selects (can be replaced with a package later)
-  const COUNTRY_TO_STATES: Record<string, string[]> = {
-    India: [
-      "Tamil Nadu",
-      "Kerala",
-      "Karnataka",
-      "Telengana",
-      "Andhra Pradesh",
-      "Other",
-    ],
-    Malaysia: ["Kuala Lumpur", "Selangor", "Johor", "Penang", "Other"],
-    "Sri Lanka": ["Columbo", "Other"],
-  };
-  const STATE_TO_CITIES: Record<string, string[]> = {
-    "Tamil Nadu": [
-      "Chennai",
-      "Cuddalore",
-      "Coimbatore",
-      "Madurai",
-      "Trichy",
-      "Other",
-    ],
-    Karnataka: ["Bengaluru", "Mysuru", "Mangaluru", "Other"],
-    Kerala: ["Bengaluru", "Mysuru", "Mangaluru"],
-    Telengana: ["Hyderabad", "Other"],
-    "Andhra Pradesh": ["Hyderabad", "Other"],
-    Other: ["Other"],
-    "Kuala Lumpur": ["Kuala Lumpur", "Other"],
-    Selangor: ["Selangor", "Other"],
-    Johor: ["Johor", "Other"],
-    Penang: ["Penang", "Other"],
-    Columbo: ["Columbo", "Other"],
-  };
+  const COUNTRY_TO_STATES: Record<string, string[]> = useMemo(
+    () => ({
+      India: [
+        "Tamil Nadu",
+        "Kerala",
+        "Karnataka",
+        "Telengana",
+        "Andhra Pradesh",
+        "Other",
+      ],
+      Malaysia: ["Kuala Lumpur", "Selangor", "Johor", "Penang", "Other"],
+      "Sri Lanka": ["Columbo", "Other"],
+    }),
+    []
+  );
+  const STATE_TO_CITIES: Record<string, string[]> = useMemo(
+    () => ({
+      "Tamil Nadu": [
+        "Chennai",
+        "Cuddalore",
+        "Coimbatore",
+        "Madurai",
+        "Trichy",
+        "Other",
+      ],
+      Karnataka: ["Bengaluru", "Mysuru", "Mangaluru", "Other"],
+      Kerala: ["Bengaluru", "Mysuru", "Mangaluru"],
+      Telengana: ["Hyderabad", "Other"],
+      "Andhra Pradesh": ["Hyderabad", "Other"],
+      Other: ["Other"],
+      "Kuala Lumpur": ["Kuala Lumpur", "Other"],
+      Selangor: ["Selangor", "Other"],
+      Johor: ["Johor", "Other"],
+      Penang: ["Penang", "Other"],
+      Columbo: ["Columbo", "Other"],
+    }),
+    []
+  );
 
   // Redirect unauthorized users back to the job page
   useEffect(() => {
@@ -275,7 +281,7 @@ export default function ApplyPage({
       setCityOptions([]);
       methods.setValue("city", "");
     }
-  }, [country]);
+  }, [country, COUNTRY_TO_STATES, methods]);
 
   useEffect(() => {
     const cities = STATE_TO_CITIES[stateVal] || [];
@@ -283,7 +289,7 @@ export default function ApplyPage({
     if (!cities.includes(methods.getValues("city"))) {
       methods.setValue("city", "");
     }
-  }, [stateVal]);
+  }, [stateVal, STATE_TO_CITIES, methods]);
 
   // Loading skeleton while session resolves
   if (status === "loading") {
@@ -743,7 +749,7 @@ export default function ApplyPage({
   );
 }
 
-import { Controller, useFormContext, type Path } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
