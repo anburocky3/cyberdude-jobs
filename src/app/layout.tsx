@@ -95,11 +95,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <Providers>
           <Header />
-          <div className="pt-16">{children}</div>
+          <main className="flex-1 pt-16">{children}</main>
           <Footer />
           <Analytics />
         </Providers>
