@@ -13,9 +13,9 @@ import { Job } from "@prisma/client";
 export default async function JobDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
   const job = await apiFetch(`/api/jobs/${slug}`, {
     cache: "no-store",
   }).then((r) => (r.ok ? r.json() : null));
@@ -283,9 +283,9 @@ export default async function JobDetailPage({
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const job: Job | null = await apiFetch(`/api/jobs/${slug}`, {
     cache: "no-store",
   }).then((r) => (r.ok ? r.json() : null));
