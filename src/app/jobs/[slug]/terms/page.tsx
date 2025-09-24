@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import Alert from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api";
-import { CheckIcon, CheckLine, CheckSquare, ChevronLeft } from "lucide-react";
+import { CheckSquare, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
@@ -25,7 +25,7 @@ export default async function TermsPage({
   }
 
   return (
-    <main className="container mx-auto py-6 px-4 max-w-3xl">
+    <main className="container mx-auto py-6 px-4 max-w-6xl">
       <div className="flex items-center gap-3  mb-4">
         <Link
           href={`/jobs/${params.slug}`}
@@ -50,6 +50,11 @@ export default async function TermsPage({
       </div> */}
 
       <div className="prose max-w-none text-gray-800 bg-white border rounded p-5 mt-6">
+        <Alert
+          variant="info"
+          title="Applicants must have their own reliable laptop, stable internet and enough daily time (6–8 hours) to practice and complete tasks."
+          className="mb-2"
+        />
         <p>
           The program is designed to provide a rigorous, hands-on learning
           experience, focusing on practical skill development and professional

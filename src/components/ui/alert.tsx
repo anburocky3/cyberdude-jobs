@@ -93,7 +93,9 @@ export function Alert({
       </span>
       <div className="flex-1 min-w-0">
         {title ? (
-          <p className="font-medium leading-6 truncate">{title}</p>
+          <p className="font-medium leading-6 break-words whitespace-normal">
+            {title}
+          </p>
         ) : null}
         {children ? (
           <div className="text-sm leading-5 mt-0.5">{children}</div>
