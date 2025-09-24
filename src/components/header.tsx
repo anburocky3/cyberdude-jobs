@@ -45,11 +45,29 @@ export function Header() {
           </Link>
         </nav> */}
 
-        <div className="flex items-center space-x-4">
-          <Button asChild size="sm" title="Navigate to cyberdudenetworks.com">
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          {/* Mobile: compact, solid button */}
+          <Button
+            variant="outline"
+            asChild
+            size="sm"
+            className="md:hidden"
+            title="Navigate to cyberdudenetworks.com"
+          >
             <Link href="https://cyberdudenetworks.com" target="_blank">
-              <LinkIcon className="" />
-              Visit Website
+              <LinkIcon className="mr-1 h-4 w-4" />
+            </Link>
+          </Button>
+          {/* Desktop: outline button with full label */}
+          <Button
+            asChild
+            size="sm"
+            className="hidden md:inline-flex"
+            title="Navigate to cyberdudenetworks.com"
+          >
+            <Link href="https://cyberdudenetworks.com" target="_blank">
+              <LinkIcon className="mr-2 h-4 w-4" />
+              <span>Visit Website</span>
             </Link>
           </Button>
           {status === "authenticated" && (
