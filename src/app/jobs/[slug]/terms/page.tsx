@@ -9,11 +9,11 @@ import { notFound, redirect } from "next/navigation";
 export default async function TermsPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const session = await auth();
 
-  const { slug } = params;
+  const { slug } = await params;
   const job = await apiFetch(`/api/jobs/${slug}`, {
     cache: "no-store",
   }).then((r) => (r.ok ? r.json() : null));
@@ -21,14 +21,14 @@ export default async function TermsPage({
   if (!job) return notFound();
 
   if (job.type === "fulltime") {
-    redirect(`/jobs/${params.slug}`);
+    redirect(`/jobs/${slug}`);
   }
 
   return (
     <main className="container mx-auto py-6 px-4 max-w-6xl">
       <div className="flex items-center gap-3  mb-4">
         <Link
-          href={`/jobs/${params.slug}`}
+          href={`/jobs/${slug}`}
           className="text-sm text-orange-600 hover:text-orange-700"
         >
           <Button
@@ -219,14 +219,14 @@ export default async function TermsPage({
 
             <div className="flex justify-center flex-col items-center gap-3 mt-6 mb-3">
               <Link
-                href={`/jobs/${params.slug}/apply`}
+                href={`/jobs/${slug}/apply`}
                 className="px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white cursor-pointer"
               >
                 <CheckSquare className="w-6 h-6 inline-flex mr-2" />
                 Accept & Continue
               </Link>
               <Link
-                href={`/jobs/${params.slug}`}
+                href={`/jobs/${slug}`}
                 className=" text-gray-600 cursor-pointer"
               >
                 Cancel
