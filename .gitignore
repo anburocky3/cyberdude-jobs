@@ -42,3 +42,4 @@ next-env.d.ts
 
 # ignore uploads
 public/uploads
+src/data/admin.ts

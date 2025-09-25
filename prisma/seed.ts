@@ -1,8 +1,31 @@
 import { Prisma, JobStatus, JobType } from "@prisma/client";
 import { prisma } from "../src/lib/prisma";
 import { jobs } from "../src/data/jobs";
+import { admins } from "../src/data/admin";
+import bcrypt from "bcryptjs";
+import { AdminSeedSchema } from "@/types/admin";
 
 async function main() {
+  // Seed admins from local file if provided
+  const parsed = AdminSeedSchema.array().parse(admins);
+  for (const a of parsed) {
+    const passwordHash = await bcrypt.hash(a.password, 10);
+    await prisma.admin.upsert({
+      where: { email: a.email.toLowerCase() },
+      update: {
+        name: a.name,
+        passwordHash,
+        isActive: a.isActive ?? true,
+      },
+      create: {
+        email: a.email.toLowerCase(),
+        name: a.name,
+        passwordHash,
+        isActive: a.isActive ?? true,
+      },
+    });
+  }
+
   for (const job of jobs) {
     await prisma.job.upsert({
       where: { slug: job.slug },

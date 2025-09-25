@@ -22,6 +22,26 @@ A simple place to discover open roles at CyberDude Networks and apply in a few e
 ![CyberDude Jobs homepage](/screenshots/1.png)
 ![CyberDude Jobs detail](/screenshots/2.png)
 
+### Admin Accounts (Local-only)
+
+To create local admin users without committing credentials, use one of these approaches:
+
+1. admin.local.example.ts → admin.ts (recommended)
+
+- Copy `src/data/admin.local.example.ts` to `src/data/admin.ts` (this file is gitignored).
+- Add your local admins:
+  - `email` (required), `password` (required, plaintext), `name` (optional), `isActive` (optional).
+- Run seeding:
+
+```bash
+npm run db:seed
+```
+
+Notes
+
+- Passwords in `src/data/admin.ts` are hashed during seeding.
+- `src/data/admin.ts` is ignored by Git (see `.gitignore`).
+
 ### How to use (for applicants)
 
 1. Open the site and pick a role that interests you.

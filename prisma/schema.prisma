@@ -82,3 +82,14 @@ model Application {
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
 }
+
+/// Admin users who can access the admin dashboard
+model Admin {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique @db.VarChar(255)
+  name         String?  @db.VarChar(255)
+  passwordHash String   @db.VarChar(255)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
