@@ -1,6 +1,37 @@
 import { prisma } from "../src/lib/prisma";
 import bcrypt from "bcryptjs";
-import { admins } from "../src/data/admin";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+
+type AdminSeed = {
+  email: string;
+  password: string;
+  name?: string;
+  isActive?: boolean;
+};
+
+function isAdminSeed(value: unknown): value is AdminSeed {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as { email?: unknown }).email === "string" &&
+    typeof (value as { password?: unknown }).password === "string"
+  );
+}
+
+function isAdminSeedArray(value: unknown): value is AdminSeed[] {
+  return Array.isArray(value) && value.every(isAdminSeed);
+}
+
+async function loadAdminsFromFile(): Promise<AdminSeed[]> {
+  try {
+    const filePath = path.resolve(process.cwd(), "src/data/admin.ts");
+    const url = pathToFileURL(filePath).href;
+    const mod = (await import(url)) as { admins?: unknown };
+    if (isAdminSeedArray(mod.admins)) return mod.admins;
+  } catch {}
+  return [];
+}
 
 async function seedAdminsFromEnv() {
   const adminEmail = (process.env.SEED_ADMIN_EMAIL || "").toLowerCase();
@@ -21,6 +52,7 @@ async function seedAdminsFromEnv() {
 }
 
 async function seedAdminsFromFile() {
+  const admins = await loadAdminsFromFile();
   for (const a of admins) {
     const passwordHash = await bcrypt.hash(a.password, 10);
     await prisma.admin.upsert({

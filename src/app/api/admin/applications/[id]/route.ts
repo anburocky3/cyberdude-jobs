@@ -1,17 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!(session && session.user && session.user.isAdmin)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const appId = parseInt(params.id);
+  const { id } = await context.params;
+  const appId = parseInt(id);
   if (isNaN(appId)) {
     return NextResponse.json(
       { error: "Invalid application ID" },
