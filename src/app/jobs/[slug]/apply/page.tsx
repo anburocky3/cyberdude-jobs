@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, use as usePromise } from "react";
+import { track } from "@vercel/analytics/react";
 import { useForm, FormProvider, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -375,12 +376,29 @@ export default function ApplyPage({
     });
     if (!valid) {
       setError("Please fix validation errors");
+      try {
+        track("apply_validation_error", { step, slug });
+      } catch {}
       return;
     }
-    setStep((s) => Math.min(3, s + 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setStep((s) => {
+      const next = Math.min(3, s + 1);
+      try {
+        track("apply_next_step", { from: s, to: next, slug });
+      } catch {}
+      return next;
+    });
   };
 
-  const onPrev = () => setStep((s) => Math.max(1, s - 1));
+  const onPrev = () =>
+    setStep((s) => {
+      const prev = Math.max(1, s - 1);
+      try {
+        track("apply_prev_step", { from: s, to: prev, slug });
+      } catch {}
+      return prev;
+    });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -388,10 +406,16 @@ export default function ApplyPage({
     setSuccess(null);
     setSubmitting(true);
     try {
+      try {
+        track("apply_submit_attempt", { slug });
+      } catch {}
       const allValid = await methods.trigger(undefined, { shouldFocus: true });
       if (!allValid) {
         setError("Please fix validation errors");
         setSubmitting(false);
+        try {
+          track("apply_validation_error", { step: "final", slug });
+        } catch {}
         return;
       }
       const jobRes = await fetch(`/api/jobs/${slug}`, {
@@ -420,10 +444,16 @@ export default function ApplyPage({
       });
       if (!res.ok) throw new Error("Failed to submit application");
       setSuccess("Application submitted successfully");
+      try {
+        track("apply_submit_success", { slug, jobId: job.id });
+      } catch {}
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Something went wrong";
       setError(message);
+      try {
+        track("apply_submit_failure", { slug, message });
+      } catch {}
     } finally {
       setSubmitting(false);
     }
@@ -538,7 +568,7 @@ export default function ApplyPage({
                     required
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Field
                     name="mobileNo"
                     label="Mobile number"
@@ -716,17 +746,43 @@ export default function ApplyPage({
                 type="button"
                 onClick={onPrev}
                 disabled={step === 1}
-                className="px-4 py-2 rounded-lg border bg-white hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 rounded-lg border bg-white hover:bg-gray-50 disabled:opacity-50 transition-colors inline-flex items-center gap-2"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-4 w-4 text-gray-700"
+                  aria-hidden
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M15.53 4.47a.75.75 0 010 1.06L9.06 12l6.47 6.47a.75.75 0 11-1.06 1.06l-7-7a.75.75 0 010-1.06l7-7a.75.75 0 011.06 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
                 Back
               </button>
               {step < 3 ? (
                 <button
                   type="button"
                   onClick={onNext}
-                  className="px-5 py-2.5 rounded-lg text-white bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700 shadow-sm transition-all"
+                  className="px-5 py-2.5 rounded-lg text-white bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700 shadow-sm transition-all inline-flex items-center gap-2"
                 >
                   Next
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-4 w-4 text-white"
+                    aria-hidden
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8.47 19.53a.75.75 0 010-1.06L14.94 12 8.47 5.53a.75.75 0 111.06-1.06l7 7a.75.75 0 010 1.06l-7 7a.75.75 0 01-1.06 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
                 </button>
               ) : methods.watch("acceptCondition") ? (
                 <button
