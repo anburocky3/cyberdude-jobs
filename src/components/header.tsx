@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LinkIcon, LogOutIcon } from "lucide-react";
+import { LinkIcon, LogOutIcon, LucideLayoutDashboard } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
 export function Header() {
@@ -54,9 +54,18 @@ export function Header() {
           )}
           {/* Desktop: outline button with full label */}
           {session?.user?.isAdmin ? (
-            <span className="hidden md:inline-flex">
-              Hello {session.user.name || "Admin"}
-            </span>
+            <div className="flex items-center space-x-2">
+              <Link
+                href="/admin"
+                className="bg-zinc-900 text-white rounded-md px-4 py-2 sm:py-1 flex items-center "
+              >
+                <LucideLayoutDashboard className="sm:mr-1 h-4 w-4" />
+                <span className="hidden md:inline-flex">Dashboard</span>
+              </Link>
+              <span className="hidden md:inline-flex">
+                Hello {session.user.name || "Admin"}
+              </span>
+            </div>
           ) : (
             <Button
               asChild
