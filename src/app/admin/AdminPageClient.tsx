@@ -335,32 +335,38 @@ export default function AdminPageClient() {
                           {app.userName || "No name provided"}
                         </h3>
                         <span
-                          className={`px-2 py-1 text-xs rounded-full ${
+                          className={`px-2 py-1 text-xs rounded-full font-semibold ${
                             app.job.type === "fulltime"
                               ? "bg-blue-100 text-blue-800"
                               : "bg-green-100 text-green-800"
                           }`}
                         >
-                          {app.job.type}
+                          {app.job.type === "fulltime"
+                            ? "Full-time"
+                            : "Internship"}
                         </span>
+
+                        <div className="text-[11px] sm:text-xs font-semibold">
+                          {app.currentStatus}
+                        </div>
                       </div>
                       <div className="flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm text-gray-600">
                         <div className="hidden xs:flex items-center space-x-1 min-w-0">
-                          <Mail className="w-4 h-4" />
+                          <Mail className="w-4 h-4 text-green-700" />
                           <span className="truncate max-w-[40vw] sm:max-w-none">
                             {app.userEmail}
                           </span>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <MapPin className="w-4 h-4" />
+                          <MapPin className="w-4 h-4 text-green-700" />
                           <span>{app.country}</span>
                         </div>
                         <div className="hidden sm:flex items-center space-x-1 min-w-0">
-                          <Briefcase className="w-4 h-4" />
+                          <Briefcase className="w-4 h-4 text-indigo-600" />
                           <span className="truncate">{app.job.title}</span>
                         </div>
                         <div className="hidden md:flex items-center space-x-1">
-                          <Clock className="w-4 h-4" />
+                          <Clock className="w-4 h-4 text-yellow-700" />
                           <span>
                             Applied{" "}
                             {formatDate(app.createdAt, "DD MMM, YYYY hh:mm A")}
@@ -374,7 +380,7 @@ export default function AdminPageClient() {
                       <div className="hidden xs:block">
                         {new Date(app.createdAt).toLocaleDateString()}
                       </div>
-                      <div className="flex flex-col items-center space-y-1">
+                      <div className="flex flex-col items-center space-y-2">
                         <Link
                           href={`/admin/applications/${app.id}`}
                           className="flex items-center justify-center w-full xs:w-auto space-x-2 px-2 py-2 rounded text-xs sm:text-sm bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 transition-all duration-200"
@@ -384,9 +390,6 @@ export default function AdminPageClient() {
                           <Trophy className="w-4 h-4" />
                           <span>Evaluate</span>
                         </Link>
-                        <div className="text-[11px] sm:text-xs">
-                          {app.currentStatus}
-                        </div>
                         {app.totalScore !== null &&
                           app.totalScore !== undefined && (
                             <div className="flex items-center space-x-1">

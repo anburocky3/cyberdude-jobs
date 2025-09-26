@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/date";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { LinkedinIcon } from "@/components/icons/linkedin";
+import Image from "next/image";
 
 type StageKey = "hr" | "technical" | "manager" | "team" | "reference";
 
@@ -134,6 +135,7 @@ export default function ScreeningClient({ appId }: { appId: number }) {
 
   const [notes, setNotes] = useState<ScreeningNote[]>([]);
   const [app, setApp] = useState<FullApplication | null>(null);
+  const [appLoading, setAppLoading] = useState<boolean>(true);
   const [stage, setStage] = useState<StageKey>("hr");
   const [verdict, setVerdict] = useState("");
   const [score, setScore] = useState("");
@@ -142,6 +144,48 @@ export default function ScreeningClient({ appId }: { appId: number }) {
   const [formError, setFormError] = useState<string>("");
   const [suggestionInfo, setSuggestionInfo] = useState<string>("");
   const [checkboxes, setCheckboxes] = useState<Record<string, boolean>>({});
+
+  // Stage accent colors (Tailwind classes) used across the UI
+  const getStageAccent = (s: StageKey) => {
+    switch (s) {
+      case "hr":
+        return {
+          dotBg: "bg-orange-500",
+          lightBg: "bg-orange-100",
+          text: "text-orange-600",
+        };
+      case "technical":
+        return {
+          dotBg: "bg-blue-500",
+          lightBg: "bg-blue-100",
+          text: "text-blue-600",
+        };
+      case "manager":
+        return {
+          dotBg: "bg-purple-500",
+          lightBg: "bg-purple-100",
+          text: "text-purple-600",
+        };
+      case "team":
+        return {
+          dotBg: "bg-emerald-500",
+          lightBg: "bg-emerald-100",
+          text: "text-emerald-600",
+        };
+      case "reference":
+        return {
+          dotBg: "bg-amber-500",
+          lightBg: "bg-amber-100",
+          text: "text-amber-600",
+        };
+      default:
+        return {
+          dotBg: "bg-gray-500",
+          lightBg: "bg-gray-100",
+          text: "text-gray-600",
+        };
+    }
+  };
 
   const grouped = useMemo(() => {
     const map: Record<StageKey, ScreeningNote[]> = {
@@ -196,10 +240,12 @@ export default function ScreeningClient({ appId }: { appId: number }) {
   }, [appId]);
 
   useEffect(() => {
+    setAppLoading(true);
     fetch(`/api/admin/applications/${appId}`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((data: FullApplication) => setApp(data))
-      .catch(() => setApp(null));
+      .catch(() => setApp(null))
+      .finally(() => setAppLoading(false));
   }, [appId]);
 
   const save = async () => {
@@ -391,40 +437,58 @@ export default function ScreeningClient({ appId }: { appId: number }) {
               <ChevronLeft className="h-4 w-4" />
             </Button>
           </Link>
-          {app && (
+          {app ? (
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-                  <Briefcase className="w-4 h-4" />
-                  <span className="truncate">{app.job.title}</span>
-                  <span
-                    className={`px-2 py-0.5 text-xs rounded-full font-semibold ${
-                      app.job.type === "fulltime"
-                        ? "bg-orange-100 text-orange-800"
-                        : "bg-green-100 text-green-800"
-                    }`}
-                  >
-                    {app.job.type === "fulltime" ? "Full-time" : "Internship"}
-                  </span>
-                </div>
-                <div className="text-xl font-bold text-gray-900 truncate">
-                  {app.userName || "No name provided"}
-                </div>
-                <div className="flex items-center gap-3 text-xs sm:text-sm text-gray-600 mt-1">
-                  <span className="inline-flex items-center gap-1">
-                    <Mail className="w-4 h-4" />
-                    {app.userEmail}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    {app.city}, {app.country}
-                  </span>
-                  <span className="hidden sm:inline bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">
-                    Applied on{" "}
-                    {formatDate(app.createdAt, "DD MMM, YYYY hh:mm A")}
-                  </span>
+              <div className="flex items-center gap-2">
+                {app.profileImage ? (
+                  <Image
+                    src={app.profileImage}
+                    alt={app.userName || "No name provided"}
+                    className="rounded-full object-cover hidden sm:block"
+                    width={80}
+                    height={80}
+                    sizes="(max-width: 640px) 80px, 100px"
+                  />
+                ) : (
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-r from-orange-500 to-pink-600 rounded-full flex items-center justify-center text-white font-semibold text-sm sm:text-base">
+                    {(app.userName || app.userEmail).charAt(0).toUpperCase()}
+                  </div>
+                )}
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                    <Briefcase className="w-4 h-4" />
+                    <span className="truncate">{app.job.title}</span>
+                    <span
+                      className={`px-2 py-0.5 text-xs rounded-full font-semibold ${
+                        app.job.type === "fulltime"
+                          ? "bg-orange-100 text-orange-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {app.job.type === "fulltime" ? "Full-time" : "Internship"}
+                    </span>
+                  </div>
+                  <div className="text-xl font-bold text-gray-900 truncate">
+                    {app.userName || "No name provided"}
+                  </div>
+                  <div className="flex items-center gap-3 text-xs sm:text-sm text-gray-600 mt-1">
+                    <span className="inline-flex items-center gap-1">
+                      <Mail className="w-4 h-4" />
+                      {app.userEmail}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      {app.city}, {app.country}
+                    </span>
+                    <span className="hidden sm:inline bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">
+                      Applied on{" "}
+                      {formatDate(app.createdAt, "DD MMM, YYYY hh:mm A")}
+                    </span>
+                  </div>
                 </div>
               </div>
+
               {app.resumeUrl && (
                 <div className="flex flex-row gap-2 items-center">
                   {app.linkedin && (
@@ -450,13 +514,35 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                 </div>
               )}
             </div>
-          )}
+          ) : appLoading ? (
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full animate-pulse">
+              <div className="flex items-center gap-2 w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-200 rounded-full"></div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="h-3 w-24 bg-gray-200 rounded" />
+                    <div className="h-4 w-16 bg-gray-200 rounded-full" />
+                  </div>
+                  <div className="h-5 w-40 bg-gray-200 rounded mb-1" />
+                  <div className="flex items-center gap-3 mt-1">
+                    <div className="h-3 w-28 bg-gray-200 rounded" />
+                    <div className="h-3 w-24 bg-gray-200 rounded" />
+                    <div className="h-3 w-32 bg-gray-200 rounded hidden sm:block" />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row gap-2 items-center">
+                <div className="w-10 h-10 bg-gray-200 rounded" />
+                <div className="h-9 w-36 bg-gray-200 rounded" />
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
       <div className="container mx-auto py-4 px-3 sm:py-8 sm:px-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
           <div className="space-y-4">
-            {app && (
+            {app ? (
               <div className="rounded-lg border p-4 bg-white">
                 <div className="mt-3 text-sm text-gray-700">
                   <div className="font-medium mb-1">Motivation</div>
@@ -566,7 +652,47 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                   </div>
                 </div>
               </div>
-            )}
+            ) : appLoading ? (
+              <div className="rounded-lg border p-4 bg-white animate-pulse">
+                <div className="h-4 w-24 bg-gray-200 rounded mb-3" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <div className="h-3 w-28 bg-gray-200 rounded" />
+                    <div className="h-12 w-full bg-gray-200 rounded" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-3 w-40 bg-gray-200 rounded" />
+                    <div className="h-12 w-full bg-gray-200 rounded" />
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                  <div className="space-y-2">
+                    <div className="h-3 w-20 bg-gray-200 rounded" />
+                    <div className="h-4 w-24 bg-gray-200 rounded" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-3 w-24 bg-gray-200 rounded" />
+                    <div className="h-4 w-28 bg-gray-200 rounded" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-3 w-16 bg-gray-200 rounded" />
+                    <div className="h-4 w-20 bg-gray-200 rounded" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-3 w-16 bg-gray-200 rounded" />
+                    <div className="h-4 w-24 bg-gray-200 rounded" />
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <div className="h-3 w-12 bg-gray-200 rounded mb-2" />
+                  <div className="flex flex-wrap gap-2">
+                    <div className="h-6 w-16 bg-gray-200 rounded-full" />
+                    <div className="h-6 w-20 bg-gray-200 rounded-full" />
+                    <div className="h-6 w-14 bg-gray-200 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div className="lg:col-span-2 space-y-6">
@@ -900,7 +1026,11 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                   <div key={k} className="relative">
                     <div className="flex flex-col sm:flex-row sm:items-center mb-3 sm:mb-4 gap-2">
                       <div className="flex items-center">
-                        <div className="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+                        <div
+                          className={`w-3 h-3 rounded-full mr-3 ${
+                            getStageAccent(k).dotBg
+                          }`}
+                        ></div>
                         <h4 className="text-base sm:text-lg font-semibold text-gray-800">
                           {stageLabels[k]}
                         </h4>
@@ -927,8 +1057,16 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                           >
                             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 sm:mb-3 gap-2">
                               <div className="flex items-center space-x-2 sm:space-x-3">
-                                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                                  <span className="text-orange-600 text-xs sm:text-sm font-semibold">
+                                <div
+                                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
+                                    getStageAccent(k).lightBg
+                                  }`}
+                                >
+                                  <span
+                                    className={`${
+                                      getStageAccent(k).text
+                                    } text-xs sm:text-sm font-semibold`}
+                                  >
                                     {n.createdBy?.charAt(0)?.toUpperCase() ||
                                       "?"}
                                   </span>
