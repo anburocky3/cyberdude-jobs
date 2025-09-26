@@ -5,6 +5,8 @@ import Providers from "./providers";
 import { Header } from "@/components/header";
 import Footer from "@/components/footer";
 import { Analytics } from "@vercel/analytics/react";
+import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
+import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -78,13 +80,30 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/favicon.ico",
+    apple: "/icons/icon-192x192.png",
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "CyberDude Jobs",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "msapplication-TileColor": "#ea580c",
+    "msapplication-config": "/browserconfig.xml",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0ea5e9",
+  themeColor: "#ea580c",
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -94,6 +113,41 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="application-name" content="CyberDude Jobs" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="CyberDude Jobs" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="msapplication-config" content="/browserconfig.xml" />
+        <meta name="msapplication-TileColor" content="#ea580c" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <meta name="theme-color" content="#ea580c" />
+
+        <link rel="apple-touch-icon" href="/icons/icon-152x152.svg" />
+        <link
+          rel="apple-touch-icon"
+          sizes="152x152"
+          href="/icons/icon-152x152.svg"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/icons/icon-192x192.svg"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="167x167"
+          href="/icons/icon-192x192.svg"
+        />
+
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="mask-icon" href="/icons/icon-192x192.svg" color="#ea580c" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
@@ -101,6 +155,8 @@ export default function RootLayout({
           <Header />
           <main className="flex-1 pt-16">{children}</main>
           <Footer />
+          <PWAInstallPrompt />
+          <ServiceWorkerRegistration />
           <Analytics />
         </Providers>
       </body>

@@ -594,7 +594,7 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                 </div>
 
                 {/* Motivation */}
-                <div className="mt-4 font-medium">Motivation</div>
+                <div className="mt-4 border-t font-medium">Motivation</div>
                 <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                   <div>
                     <div className="text-gray-500">Reason to Join</div>

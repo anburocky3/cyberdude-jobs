@@ -36,6 +36,7 @@ To create local admin users without committing credentials, use one of these app
 ```bash
 npm run db:seed
 npm run db:seed:admins
+node scripts/generate-icons.mjs # to generate PWA icons
 ```
 
 Notes
