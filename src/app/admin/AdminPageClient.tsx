@@ -330,24 +330,24 @@ export default function AdminPageClient() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2 sm:space-x-3 mb-1">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center space-x-2 sm:space-x-3 mb-1 space-y-1 sm:space-y-0">
                         <h3 className="font-semibold text-gray-900 truncate text-sm sm:text-base">
                           {app.userName || "No name provided"}
                         </h3>
-                        <span
-                          className={`px-2 py-1 text-xs rounded-full font-semibold ${
-                            app.job.type === "fulltime"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-green-100 text-green-800"
-                          }`}
-                        >
-                          {app.job.type === "fulltime"
-                            ? "Full-time"
-                            : "Internship"}
-                        </span>
+                        <div className="flex items-center space-x-2 sm:space-x-3 mb-1">
+                          <span
+                            className={`px-2 py-0.5 sm:py-1 text-xs rounded-full font-semibold ${
+                              app.job.type === "fulltime"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-green-100 text-green-800"
+                            }`}
+                          >
+                            {app.job.type === "fulltime"
+                              ? "Full-time"
+                              : "Internship"}
+                          </span>
 
-                        <div className="text-[11px] sm:text-xs font-semibold">
-                          {app.currentStatus}
+                          <div className="text-xs">({app.currentStatus})</div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm text-gray-600">
@@ -359,15 +359,17 @@ export default function AdminPageClient() {
                         </div>
                         <div className="flex items-center space-x-1">
                           <MapPin className="w-4 h-4 text-green-700" />
-                          <span>{app.country}</span>
+                          <span className="text-green-900">{app.country}</span>
                         </div>
                         <div className="hidden sm:flex items-center space-x-1 min-w-0">
                           <Briefcase className="w-4 h-4 text-indigo-600" />
-                          <span className="truncate">{app.job.title}</span>
+                          <span className="truncate text-indigo-900">
+                            {app.job.title}
+                          </span>
                         </div>
                         <div className="hidden md:flex items-center space-x-1">
                           <Clock className="w-4 h-4 text-yellow-700" />
-                          <span>
+                          <span className="text-xs">
                             Applied{" "}
                             {formatDate(app.createdAt, "DD MMM, YYYY hh:mm A")}
                           </span>

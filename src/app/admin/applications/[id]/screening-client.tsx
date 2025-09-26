@@ -1,12 +1,21 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Download, Mail, MapPin, Briefcase, ChevronLeft } from "lucide-react";
+import {
+  Download,
+  Mail,
+  MapPin,
+  Briefcase,
+  ChevronLeft,
+  BarChart3,
+  FileText,
+} from "lucide-react";
 import { formatDate } from "@/lib/date";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { LinkedinIcon } from "@/components/icons/linkedin";
 import Image from "next/image";
+import { calculateAge } from "@/lib/utils";
 
 type StageKey = "hr" | "technical" | "manager" | "team" | "reference";
 
@@ -458,7 +467,9 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
                     <Briefcase className="w-4 h-4" />
-                    <span className="truncate">{app.job.title}</span>
+                    <span className="truncate w-44 sm:w-auto">
+                      {app.job.title}
+                    </span>
                     <span
                       className={`px-2 py-0.5 text-xs rounded-full font-semibold ${
                         app.job.type === "fulltime"
@@ -545,47 +556,72 @@ export default function ScreeningClient({ appId }: { appId: number }) {
             {app ? (
               <div className="rounded-lg border p-4 bg-white">
                 <div className="mt-3 text-sm text-gray-700">
-                  <div className="font-medium mb-1">Motivation</div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <div className="text-gray-500">Reason to Join</div>
-                      <div className="whitespace-pre-wrap">
-                        {app.reasonToJoin}
+                      <div className="text-gray-500">Gender</div>
+                      <div className="text-gray-900">{app.gender}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Date of Birth</div>
+                      <div className="text-gray-900">
+                        {formatDate(app.dateOfBirth, "DD MMM, YYYY")} (
+                        <span className="font-medium">
+                          {calculateAge(app.dateOfBirth)})
+                        </span>
                       </div>
                     </div>
                     <div>
-                      <div className="text-gray-500">Excited About Startup</div>
-                      <div className="whitespace-pre-wrap">
-                        {app.excitedAboutStartup}
+                      <div className="text-gray-500">Mobile</div>
+                      <div className="text-gray-900">
+                        <a
+                          className="text-blue-600 hover:underline"
+                          href={`tel:${app.mobileNo}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="Call"
+                        >
+                          {app.mobileNo}
+                        </a>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Location</div>
+                      <div>
+                        {app.city}, {app.state}, {app.country}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Basic Details */}
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                {/* Motivation */}
+                <div className="mt-4 font-medium">Motivation</div>
+                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                   <div>
-                    <div className="text-gray-500">Gender</div>
-                    <div className="text-gray-900">{app.gender}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500">Date of Birth</div>
-                    <div className="text-gray-900">
-                      {formatDate(app.dateOfBirth, "DD MMM, YYYY")}
+                    <div className="text-gray-500">Reason to Join</div>
+                    <div className="whitespace-pre-wrap">
+                      {app.reasonToJoin}
                     </div>
                   </div>
                   <div>
-                    <div className="text-gray-500">Mobile</div>
-                    <div className="text-gray-900">
-                      <a
-                        className="text-blue-600 hover:underline"
-                        href={`tel:${app.mobileNo}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        title="Call"
-                      >
-                        {app.mobileNo}
-                      </a>
+                    <div className="text-gray-500">Excited About Startup</div>
+                    <div className="whitespace-pre-wrap">
+                      {app.excitedAboutStartup}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Education & Experience */}
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <div className="text-gray-500">Schooling</div>
+                    <div>
+                      {app.educationSchool} ({app.educationSchoolPercentage}%)
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500">Higher Studies</div>
+                    <div>
+                      {app.educationCollege} ({app.educationCollegePercentage}%)
                     </div>
                   </div>
                   <div>
@@ -605,34 +641,12 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                       )}
                     </div>
                   </div>
-                </div>
-
-                {/* Education & Experience */}
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <div className="text-gray-500">Education (School)</div>
-                    <div>
-                      {app.educationSchool} ({app.educationSchoolPercentage}%)
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500">Education (College)</div>
-                    <div>
-                      {app.educationCollege} ({app.educationCollegePercentage}%)
-                    </div>
-                  </div>
                   <div>
                     <div className="text-gray-500">Experience</div>
                     <div>
                       {app.workedAlready
                         ? `Yes${app.companyName ? `, ${app.companyName}` : ""}`
                         : "No"}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500">Location</div>
-                    <div>
-                      {app.city}, {app.state}, {app.country}
                     </div>
                   </div>
                 </div>
@@ -697,7 +711,7 @@ export default function ScreeningClient({ appId }: { appId: number }) {
 
           <div className="lg:col-span-2 space-y-6">
             {/* Overview Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Overall Score Card */}
               <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl border border-blue-200 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
@@ -705,66 +719,54 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                     Overall Score
                   </div>
                   <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">📊</span>
+                    <BarChart3 className="w-4 h-4 text-white" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-blue-900 mb-2">
                   {overallScore}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div
-                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      grade === "A+"
-                        ? "bg-green-100 text-green-800"
-                        : grade === "A"
-                        ? "bg-green-100 text-green-800"
-                        : grade === "B+"
-                        ? "bg-blue-100 text-blue-800"
-                        : grade === "B"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {grade}
+                {notes.length === 0 ? (
+                  <div className="text-sm font-medium text-blue-700">
+                    Need to evaluate
                   </div>
-                  <div className="text-sm text-blue-700">{recommendation}</div>
-                </div>
+                ) : (
+                  <div className="flex items-center space-x-2">
+                    <div
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        grade === "A+"
+                          ? "bg-green-100 text-green-800"
+                          : grade === "A"
+                          ? "bg-green-100 text-green-800"
+                          : grade === "B+"
+                          ? "bg-blue-100 text-blue-800"
+                          : grade === "B"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {grade}
+                    </div>
+                    <div className="text-sm text-blue-700">
+                      {recommendation}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Stage Progress Card */}
+              {/* Evaluations Card */}
               <div className="bg-gradient-to-br from-orange-50 to-amber-100 rounded-xl border border-orange-200 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-sm font-medium text-orange-700">
-                    Stages Completed
+                    Evaluations
                   </div>
                   <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">✓</span>
+                    <FileText className="w-4 h-4 text-white" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-orange-900 mb-2">
-                  {
-                    Object.values(grouped).filter(
-                      (stageNotes) => stageNotes.length > 0
-                    ).length
-                  }
-                </div>
-                <div className="text-sm text-orange-700">out of 5 stages</div>
-              </div>
-
-              {/* Evaluations Count Card */}
-              <div className="bg-gradient-to-br from-purple-50 to-pink-100 rounded-xl border border-purple-200 p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm font-medium text-purple-700">
-                    Total Evaluations
-                  </div>
-                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">📝</span>
-                  </div>
-                </div>
-                <div className="text-3xl font-bold text-purple-900 mb-2">
                   {notes.length}
                 </div>
-                <div className="text-sm text-purple-700">
+                <div className="text-sm text-orange-700">
                   evaluation{notes.length !== 1 ? "s" : ""} recorded
                 </div>
               </div>
