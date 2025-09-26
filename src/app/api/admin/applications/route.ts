@@ -15,6 +15,7 @@ export async function GET(request: Request) {
   const jobIdParam = searchParams.get("jobId");
   const from = searchParams.get("from") || undefined;
   const to = searchParams.get("to") || undefined;
+  const evaluated = searchParams.get("evaluated") || undefined; // 'yes' | 'no'
 
   const where: Prisma.ApplicationWhereInput = {};
   if (jobType) where.job = { is: { type: jobType as JobType } };
@@ -36,7 +37,7 @@ export async function GET(request: Request) {
     },
   });
 
-  const filtered = q
+  let filtered = q
     ? results.filter((a) => {
         const hay = [
           a.userEmail,
@@ -51,6 +52,13 @@ export async function GET(request: Request) {
       })
     : results;
 
+  // Filter by evaluated state using totalScore presence
+  if (evaluated === "yes") {
+    filtered = filtered.filter((a) => a.totalScore != null);
+  } else if (evaluated === "no") {
+    filtered = filtered.filter((a) => a.totalScore == null);
+  }
+
   return NextResponse.json(
     filtered.map((a) => ({
       id: a.id,
@@ -61,6 +69,7 @@ export async function GET(request: Request) {
       profileImage: a.profileImage,
       currentStatus: a.currentStatus,
       country: a.country,
+      totalScore: a.totalScore,
       createdAt: a.createdAt.toISOString(),
       skills: Array.isArray(a.skills) ? (a.skills as string[]) : [],
     }))

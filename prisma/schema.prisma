@@ -52,12 +52,12 @@ model Job {
 }
 
 model Application {
-  id                         Int      @id @default(autoincrement())
+  id                         Int             @id @default(autoincrement())
   jobId                      Int
-  job                        Job      @relation(fields: [jobId], references: [id])
+  job                        Job             @relation(fields: [jobId], references: [id])
   userEmail                  String
   userName                   String?
-  profileImage               String?  @db.Text
+  profileImage               String?         @db.Text
   gender                     String
   dateOfBirth                String
   mobileNo                   String
@@ -74,13 +74,31 @@ model Application {
   workedAlready              Boolean
   companyName                String?
   skills                     Json
-  resumeUrl                  String?  @db.Text
-  reasonToJoin               String   @db.Text
-  excitedAboutStartup        String   @db.Text
+  resumeUrl                  String?         @db.Text
+  reasonToJoin               String          @db.Text
+  excitedAboutStartup        String          @db.Text
   cameFrom                   String
   acceptCondition            Boolean
-  createdAt                  DateTime @default(now())
-  updatedAt                  DateTime @updatedAt
+  totalScore                 Int? // Overall score from all screening stages
+  createdAt                  DateTime        @default(now())
+  updatedAt                  DateTime        @updatedAt
+  ScreeningNote              ScreeningNote[]
+}
+
+/// HR screening notes and status per application
+model ScreeningNote {
+  id            Int         @id @default(autoincrement())
+  applicationId Int
+  application   Application @relation(fields: [applicationId], references: [id])
+  stage         String      @db.VarChar(64) // hr | technical | manager | team
+  verdict       String?     @db.VarChar(32) // shortlist | hold | reject
+  score         Int? // 0-100
+  notes         String?     @db.Text
+  createdBy     String?     @db.VarChar(255)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([applicationId])
 }
 
 /// Admin users who can access the admin dashboard
