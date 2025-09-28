@@ -117,6 +117,12 @@ export default function RootLayout({
         <meta name="application-name" content="CyberDude Jobs" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="CyberDude Jobs" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <meta name="apple-touch-fullscreen" content="yes" />
+        <meta name="apple-mobile-web-app-orientations" content="portrait" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
@@ -124,14 +130,83 @@ export default function RootLayout({
         <meta name="msapplication-tap-highlight" content="no" />
         <meta name="theme-color" content="#ea580c" />
 
-        {/* iOS splash screen meta tags */}
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
+        {/* iOS splash screens for different devices */}
+        {/* Default fallback splash screen */}
+        <link
+          rel="apple-touch-startup-image"
+          href="/splash/splash-1125x2436.png"
         />
-        <meta
-          name="apple-touch-startup-image"
-          content="/icons/icon-512x512.png"
+
+        {/* iOS splash screens for different devices */}
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/splash-1320x2868.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/splash-1206x2622.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/splash-1290x2796.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/splash-1179x2556.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/splash-1170x2532.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/splash-1080x2340.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/splash-1242x2688.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/splash-1125x2436.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)"
+          href="/splash/splash-828x1792.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)"
+          href="/splash/splash-1242x2208.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
+          href="/splash/splash-750x1334.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)"
+          href="/splash/splash-2048x2732.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)"
+          href="/splash/splash-1668x2388.png"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)"
+          href="/splash/splash-1536x2048.png"
         />
 
         <link rel="apple-touch-icon" href="/icons/icon-152x152.png" />

@@ -1,5 +1,4 @@
 // Service Worker for CyberDude Jobs PWA
-const CACHE_NAME = "cyberdude-jobs-v1";
 const STATIC_CACHE = "static-v1";
 const DYNAMIC_CACHE = "dynamic-v1";
 
@@ -12,6 +11,27 @@ const STATIC_ASSETS = [
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png",
   "/favicon.ico",
+  // iOS splash screens
+  "/splash/splash-1320x2868.png",
+  "/splash/splash-1206x2622.png",
+  "/splash/splash-1290x2796-16plus.png",
+  "/splash/splash-1179x2556-16.png",
+  "/splash/splash-1350x2934.png",
+  "/splash/splash-1236x2688.png",
+  "/splash/splash-1320x2868-17plus.png",
+  "/splash/splash-1206x2622-17.png",
+  "/splash/splash-1290x2796.png",
+  "/splash/splash-1179x2556.png",
+  "/splash/splash-1170x2532.png",
+  "/splash/splash-1080x2340.png",
+  "/splash/splash-1242x2688.png",
+  "/splash/splash-1125x2436.png",
+  "/splash/splash-828x1792.png",
+  "/splash/splash-1242x2208.png",
+  "/splash/splash-750x1334.png",
+  "/splash/splash-2048x2732.png",
+  "/splash/splash-1668x2388.png",
+  "/splash/splash-1536x2048.png",
 ];
 
 // Install event - cache static assets
@@ -128,7 +148,7 @@ async function networkFirst(request, cacheName) {
       cache.put(request, networkResponse.clone());
     }
     return networkResponse;
-  } catch (error) {
+  } catch {
     console.log("Network First: Network failed, trying cache");
     const cachedResponse = await caches.match(request);
     if (cachedResponse) {
