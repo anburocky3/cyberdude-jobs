@@ -116,7 +116,6 @@ export default function RootLayout({
       <head>
         <meta name="application-name" content="CyberDude Jobs" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="CyberDude Jobs" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -125,27 +124,37 @@ export default function RootLayout({
         <meta name="msapplication-tap-highlight" content="no" />
         <meta name="theme-color" content="#ea580c" />
 
-        <link rel="apple-touch-icon" href="/icons/icon-152x152.svg" />
+        {/* iOS splash screen meta tags */}
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <meta
+          name="apple-touch-startup-image"
+          content="/icons/icon-512x512.png"
+        />
+
+        <link rel="apple-touch-icon" href="/icons/icon-152x152.png" />
         <link
           rel="apple-touch-icon"
           sizes="152x152"
-          href="/icons/icon-152x152.svg"
+          href="/icons/icon-152x152.png"
         />
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/icons/icon-192x192.svg"
+          href="/icons/icon-192x192.png"
         />
         <link
           rel="apple-touch-icon"
           sizes="167x167"
-          href="/icons/icon-192x192.svg"
+          href="/icons/icon-192x192.png"
         />
 
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="mask-icon" href="/icons/icon-192x192.svg" color="#ea580c" />
+        <link rel="mask-icon" href="/icons/icon-192x192.png" color="#ea580c" />
         <link rel="shortcut icon" href="/favicon.ico" />
       </head>
       <body
