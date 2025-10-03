@@ -211,14 +211,45 @@ export default function AdminPageClient() {
                 ({filtered.length} total applications)
               </span>
             </h2>
-            <button
-              onClick={exportCsv}
-              className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-orange-500 to-pink-600 text-white rounded-lg hover:from-orange-600 hover:to-pink-700 transition-all duration-200 shadow-sm text-sm font-semibold"
-            >
-              <Download className="w-4 h-4" />
-              <span className="hidden xs:inline">Export CSV</span>
-              <span className="xs:hidden">Export</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={exportCsv}
+                className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-orange-500 to-pink-600 text-white rounded-lg hover:from-orange-600 hover:to-pink-700 transition-all duration-200 shadow-sm text-sm font-semibold"
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden xs:inline">Export CSV</span>
+                <span className="xs:hidden">CSV</span>
+              </button>
+              <button
+                onClick={async () => {
+                  const params = new URLSearchParams();
+                  if (q) params.set("q", q);
+                  if (jobType) params.set("jobType", jobType);
+                  if (from) params.set("from", from);
+                  if (to) params.set("to", to);
+                  if (gender) params.set("gender", gender);
+                  if (interiewProcess)
+                    params.set("interiewProcess", interiewProcess);
+                  if (result) params.set("interviewResult", result);
+                  const res = await fetch(
+                    `/api/admin/applications.xlsx?${params.toString()}`
+                  );
+                  const blob = await res.blob();
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `applications.xlsx`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-sm text-sm font-semibold"
+                title="Export styled Excel"
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden xs:inline">Export Excel</span>
+                <span className="xs:hidden">Excel</span>
+              </button>
+            </div>
           </div>
 
           {/* Overview by Job */}

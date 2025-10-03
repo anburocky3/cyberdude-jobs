@@ -53,46 +53,50 @@ export async function GET(request: Request) {
 
   const headers = [
     // Application meta
-    "id",
-    "created_at",
-    "updated_at",
+    "ID",
+    "CREATED_AT",
+    "UPDATED_AT",
     // Job
-    "job_id",
-    "job_title",
-    "job_type",
-    "job_slug",
+    "JOB_ID",
+    "JOB_TITLE",
+    "JOB_TYPE",
+    "JOB_SLUG",
     // Applicant basics
-    "user_email",
-    "user_name",
-    "profile_image",
-    "gender",
-    "date_of_birth",
-    "mobile_no",
+    "USER_EMAIL",
+    "USER_NAME",
+    "PROFILE_IMAGE",
+    "GENDER",
+    "DATE_OF_BIRTH",
+    "MOBILE_NO",
     // Location & status
-    "country",
-    "state",
-    "city",
-    "current_status",
+    "COUNTRY",
+    "STATE",
+    "CITY",
+    "CURRENT_STATUS",
     // Links
-    "linkedin",
-    "portfolio",
+    "LINKEDIN",
+    "PORTFOLIO",
     // Education
-    "education_school",
-    "education_school_percentage",
-    "education_college",
-    "education_college_percentage",
+    "EDUCATION_SCHOOL",
+    "EDUCATION_SCHOOL_PERCENTAGE",
+    "EDUCATION_COLLEGE",
+    "EDUCATION_COLLEGE_PERCENTAGE",
     // Experience
-    "worked_already",
-    "company_name",
+    "WORKED_ALREADY",
+    "COMPANY_NAME",
     // Skills & resume
-    "skills",
-    "resume_url",
+    "SKILLS",
+    "RESUME_URL",
     // Motivation
-    "reason_to_join",
-    "excited_about_startup",
-    "came_from",
+    "REASON_TO_JOIN",
+    "EXCITED_ABOUT_STARTUP",
+    "CAME_FROM",
     // Consent
-    "accept_condition",
+    "ACCEPT_CONDITION",
+    // Screening summary
+    "TOTAL_SCORE",
+    "INTERVIEW_PROCESS",
+    "INTERVIEW_RESULT",
   ];
 
   const rows = filtered.map((a) => [
@@ -137,11 +141,15 @@ export async function GET(request: Request) {
     a.cameFrom,
     // Consent
     a.acceptCondition,
+    // Screening summary
+    a.totalScore ?? "",
+    a.interviewProcess ?? "",
+    a.result ?? "",
   ]);
-  const csv = [
-    headers.join(","),
-    ...rows.map((r) => r.map(escapeCsv).join(",")),
-  ].join("\n");
+  const body = [headers, ...rows]
+    .map((r) => r.map(escapeCsv).join(","))
+    .join("\n");
+  const csv = "\uFEFF" + body; // BOM for Excel UTF-8
 
   return new NextResponse(csv, {
     headers: {
