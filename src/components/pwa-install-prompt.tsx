@@ -26,9 +26,13 @@ export function PWAInstallPrompt() {
       return;
     }
 
+    // Respect previous dismissal
+    const dismissed = localStorage.getItem("pwaInstallDismissed") === "true";
+
     // Listen for the beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
+      if (dismissed) return; // do not show again if user dismissed
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShowInstallPrompt(true);
     };
@@ -69,6 +73,9 @@ export function PWAInstallPrompt() {
   };
 
   const handleDismiss = () => {
+    try {
+      localStorage.setItem("pwaInstallDismissed", "true");
+    } catch {}
     setShowInstallPrompt(false);
     setDeferredPrompt(null);
   };
