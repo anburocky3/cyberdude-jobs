@@ -9,6 +9,7 @@ import ShareJob from "@/components/ShareJob";
 import { Button } from "@/components/ui/button";
 import { Briefcase, Building2Icon, ChevronLeft, MapPin } from "lucide-react";
 import { Job } from "@prisma/client";
+import Alert from "@/components/ui/alert";
 
 export default async function JobDetailPage({
   params,
@@ -23,6 +24,10 @@ export default async function JobDetailPage({
   if (!job) return notFound();
 
   const isExpired = job.status === "expired";
+  const deadlineCrossed = job.applicationDeadline
+    ? new Date(job.applicationDeadline) < new Date()
+    : false;
+  const isClosed = isExpired || deadlineCrossed;
   const responsibilities = Array.isArray(job.responsibilities)
     ? (job.responsibilities as string[])
     : [job.description];
@@ -121,7 +126,7 @@ export default async function JobDetailPage({
                 Share
               </Button> */}
                 {/* </div> */}
-                <SignInButton job={job} />
+                {!isClosed ? <SignInButton job={job} /> : null}
               </div>
             </div>
           </section>
@@ -129,6 +134,12 @@ export default async function JobDetailPage({
       </div>
 
       <div className="container mx-auto py-3 sm:py-5 px-4">
+        {isClosed && (
+          <Alert
+            variant="error"
+            title="Application has closed. Please check the CyberDude website for future recruitment."
+          ></Alert>
+        )}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
@@ -263,9 +274,9 @@ export default async function JobDetailPage({
                 )}
                 <Row
                   label="Job Status"
-                  value={isExpired ? "Expired" : "Open"}
+                  value={isClosed ? "Closed" : "Open"}
                   badge
-                  status={isExpired ? "expired" : "open"}
+                  status={isClosed ? "expired" : "open"}
                 />
               </div>
             </div>

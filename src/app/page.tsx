@@ -4,6 +4,7 @@ import type { Job } from "@prisma/client";
 import { apiFetch } from "@/lib/api";
 import { ArrowRight, VideoIcon } from "lucide-react";
 import JobList from "@/components/job-list";
+import Alert from "@/components/ui/alert";
 
 export const metadata: Metadata = {
   title: "Find Tech Jobs and Internships",
@@ -41,6 +42,13 @@ export default async function JobsPage() {
   const jobs = (allJobs as Job[]) ?? [];
   const fulltime = jobs.filter((j) => j.type === "fulltime");
   const internships = jobs.filter((j) => j.type === "internship");
+  const hasOpenJobs = jobs.some((j) => {
+    const expired = j.status === "expired";
+    const deadlinePassed = j.applicationDeadline
+      ? new Date(j.applicationDeadline) < new Date()
+      : false;
+    return !(expired || deadlinePassed);
+  });
 
   return (
     <main className="">
@@ -61,6 +69,14 @@ export default async function JobsPage() {
       </section>
 
       <div className="container mx-auto ">
+        {!hasOpenJobs && (
+          <div className="px-4 mb-6">
+            <Alert
+              variant="error"
+              title="Application has closed. Please check the CyberDude website for future recruitment."
+            />
+          </div>
+        )}
         <section className="sm:pb-10 px-4 mb-12">
           <h2 className="text-2xl font-semibold mb-4">Full-time Roles</h2>
           <ul className="grid gap-4 sm:grid-cols-2">

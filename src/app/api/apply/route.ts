@@ -66,6 +66,24 @@ export async function POST(request: Request) {
   }
 
   try {
+    const job = await prisma.job.findUnique({ where: { id: jobId } });
+    if (!job) {
+      return NextResponse.json({ error: "Job not found" }, { status: 404 });
+    }
+    const isExpired = job.status === "expired";
+    const deadlinePassed = job.applicationDeadline
+      ? new Date(job.applicationDeadline) < new Date()
+      : false;
+    if (isExpired || deadlinePassed) {
+      return NextResponse.json(
+        {
+          error:
+            "Application has closed. Please check the CyberDude website for future recruitment.",
+        },
+        { status: 400 }
+      );
+    }
+
     const created = await prisma.application.create({
       data: {
         jobId,

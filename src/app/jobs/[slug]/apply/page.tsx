@@ -162,6 +162,14 @@ export default function ApplyPage({
   const [success, setSuccess] = useState<string | null>(null);
 
   const [job, setJob] = useState<Job>();
+  const isClosed = useMemo(() => {
+    if (!job) return false;
+    const expired = job.status === "expired";
+    const deadlinePassed = job.applicationDeadline
+      ? new Date(job.applicationDeadline) < new Date()
+      : false;
+    return expired || deadlinePassed;
+  }, [job]);
 
   // get job slug from params and fetch job details
   useEffect(() => {
@@ -340,6 +348,12 @@ export default function ApplyPage({
   if (status !== "authenticated") return null;
 
   const onNext = async () => {
+    if (isClosed) {
+      setError(
+        "Application has closed. Please check the CyberDude website for future recruitment."
+      );
+      return;
+    }
     setError(null);
     const fieldsForStep: import("react-hook-form").Path<FormData>[] =
       step === 1
@@ -406,6 +420,11 @@ export default function ApplyPage({
     setSuccess(null);
     setSubmitting(true);
     try {
+      if (isClosed) {
+        throw new Error(
+          "Application has closed. Please check the CyberDude website for future recruitment."
+        );
+      }
       try {
         track("apply_submit_attempt", { slug });
       } catch {}
@@ -479,9 +498,23 @@ export default function ApplyPage({
             {job?.title || "this job"}
           </span>
         </h1>
-        <p className="text-sm text-gray-600 mb-6">
-          Complete the 3 steps to submit your application.
-        </p>
+        {isClosed ? (
+          <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2 mb-6">
+            Application has closed. Please check the{" "}
+            <a
+              href="https://cyberdudenetworks.com"
+              target="_blank"
+              className="underline font-medium"
+            >
+              CyberDude website
+            </a>{" "}
+            for future recruitment.
+          </div>
+        ) : (
+          <p className="text-sm text-gray-600 mb-6">
+            Complete the 3 steps to submit your application.
+          </p>
+        )}
         <FormProvider {...methods}>
           <form onSubmit={onSubmit} className="space-y-6">
             {/* Stepper */}
@@ -499,7 +532,7 @@ export default function ApplyPage({
               </div>
             </div>
 
-            {step === 1 && (
+            {!isClosed && step === 1 && (
               <section className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div className="flex items-center gap-5 p-4 bg-white/80 border rounded-xl shadow-sm">
                   <Image
@@ -622,7 +655,7 @@ export default function ApplyPage({
               </section>
             )}
 
-            {step === 2 && (
+            {!isClosed && step === 2 && (
               <section className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="col-span-2">
@@ -687,7 +720,7 @@ export default function ApplyPage({
               </section>
             )}
 
-            {step === 3 && (
+            {!isClosed && step === 3 && (
               <section className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <TextArea
                   name="reasonToJoin"
@@ -745,7 +778,7 @@ export default function ApplyPage({
               <button
                 type="button"
                 onClick={onPrev}
-                disabled={step === 1}
+                disabled={step === 1 || isClosed}
                 className="px-4 py-2 rounded-lg border bg-white hover:bg-gray-50 disabled:opacity-50 transition-colors inline-flex items-center gap-2"
               >
                 <svg
@@ -763,7 +796,7 @@ export default function ApplyPage({
                 </svg>
                 Back
               </button>
-              {step < 3 ? (
+              {!isClosed && step < 3 ? (
                 <button
                   type="button"
                   onClick={onNext}
@@ -784,7 +817,7 @@ export default function ApplyPage({
                     />
                   </svg>
                 </button>
-              ) : methods.watch("acceptCondition") ? (
+              ) : !isClosed && methods.watch("acceptCondition") ? (
                 <button
                   type="submit"
                   disabled={submitting}
@@ -792,6 +825,10 @@ export default function ApplyPage({
                 >
                   {submitting ? "Submitting..." : "Submit Application"}
                 </button>
+              ) : isClosed ? (
+                <span className="text-sm text-gray-600">
+                  Applications are closed.
+                </span>
               ) : (
                 <span className="text-sm text-gray-600">
                   Please confirm you can handle the role to submit.
