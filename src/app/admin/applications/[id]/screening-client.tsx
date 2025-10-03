@@ -1074,7 +1074,7 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                   </label>
                   <select
                     className="border rounded px-2 py-1 text-sm"
-                    value={app?.result || ""}
+                    value={app?.result || "pending"}
                     title={"Will unlock when all five stages completed!"}
                     onChange={async (e) => {
                       const next = e.target.value || null;
@@ -1095,7 +1095,7 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                               ...prev,
                               result: next as FullApplication["result"],
                               interviewProcess:
-                                next && next !== "hold"
+                                next && next !== "hold" && next !== "pending"
                                   ? "completed"
                                   : prev.interviewProcess || "started",
                             }

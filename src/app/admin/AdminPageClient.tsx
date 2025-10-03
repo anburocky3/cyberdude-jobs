@@ -87,6 +87,10 @@ export default function AdminPageClient() {
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
   const [evaluated, setEvaluated] = useState<string>(""); // '', 'yes', 'no'
+  const [gender, setGender] = useState<string>(""); // '', 'male', 'female', 'other'
+  const [interiewProcess, setInteriewProcess] = useState<string>(""); // '', 'started', 'in_progress', 'completed'
+  const [result, setResult] = useState<string>(""); // '', 'hired', 'hold', 'reject'
+  const [sort, setSort] = useState<string>("created_desc");
   const [loading, setLoading] = useState(false);
   const [screeningNotes, setScreeningNotes] = useState<
     Record<number, ScreeningNote[]>
@@ -106,11 +110,26 @@ export default function AdminPageClient() {
     if (from) params.set("from", from);
     if (to) params.set("to", to);
     if (evaluated) params.set("evaluated", evaluated);
+    if (sort) params.set("sort", sort);
+    if (gender) params.set("gender", gender);
+    if (interiewProcess) params.set("interiewProcess", interiewProcess);
+    if (result) params.set("interviewResult", result);
     fetch(`/api/admin/applications?${params.toString()}`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((data: ListApplication[]) => setApps(data))
       .catch(() => setApps([]));
-  }, [q, jobType, jobId, from, to, evaluated]);
+  }, [
+    q,
+    jobType,
+    jobId,
+    from,
+    to,
+    evaluated,
+    sort,
+    gender,
+    interiewProcess,
+    result,
+  ]);
 
   useEffect(() => {
     fetch(`/api/admin/overview`, { cache: "no-store" })
@@ -292,6 +311,89 @@ export default function AdminPageClient() {
       </div>
 
       <div className="container mx-auto py-6 px-3 sm:py-8 sm:px-4 max-w-7xl">
+        {/* Sorting */}
+        <div className="bg-white mb-5 bg-gradient-to-tr from-white to-blue-50 rounded-lg border border-gray-200 p-3 sm:p-4 shadow-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-xs text-gray-700 uppercase font-semibold">
+                Order
+              </span>
+              <select
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-full"
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+              >
+                <option value="created_desc">Newest first</option>
+                <option value="created_asc">Oldest first</option>
+              </select>
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-xs text-gray-700 uppercase font-semibold">
+                Score
+              </span>
+              <select
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-full"
+                value={sort.startsWith("score_") ? sort : ""}
+                onChange={(e) => setSort(e.target.value || "created_desc")}
+              >
+                <option value="">None</option>
+                <option value="score_desc">High score</option>
+                <option value="score_asc">Low score</option>
+              </select>
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-xs text-gray-700 uppercase font-semibold">
+                Gender
+              </span>
+              <select
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-full"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                title="Filter by gender"
+              >
+                <option value="">All Genders</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-xs text-gray-700 uppercase font-semibold">
+                Interview
+              </span>
+              <select
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-full"
+                value={interiewProcess}
+                onChange={(e) => setInteriewProcess(e.target.value)}
+                title="Filter by interview process"
+              >
+                <option value="">All Interview Processes</option>
+                <option value="pending">Pending</option>
+                <option value="started">Started</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-xs text-gray-700 uppercase font-semibold">
+                Result
+              </span>
+              <select
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-full"
+                value={result}
+                onChange={(e) => setResult(e.target.value)}
+                title="Filter by interview result"
+              >
+                <option value="">All Interview Results</option>
+                <option value="pending">Pending</option>
+                <option value="hired">Hired</option>
+                <option value="hold">Hold</option>
+                <option value="reject">Reject</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         {/* Applications List */}
         <div className="space-y-3">
           {filtered.map((app) => (

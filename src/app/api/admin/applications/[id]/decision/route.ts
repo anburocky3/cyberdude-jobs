@@ -50,7 +50,12 @@ export async function POST(
     | "in_progress"
     | "completed"
     | undefined;
-  const result = body.result as "hired" | "hold" | "reject" | undefined;
+  const result = body.result as
+    | "pending"
+    | "hired"
+    | "hold"
+    | "reject"
+    | undefined;
 
   const updated = await prisma.application.update({
     where: { id: appId },
