@@ -139,6 +139,8 @@ export default function ScreeningClient({ appId }: { appId: number }) {
     excitedAboutStartup: string;
     cameFrom: string;
     acceptCondition: boolean;
+    interviewProcess?: "started" | "in_progress" | "completed";
+    result?: "hired" | "hold" | "reject" | null;
     createdAt: string;
   };
 
@@ -271,6 +273,10 @@ export default function ScreeningClient({ appId }: { appId: number }) {
     }
     if (!stage) {
       setFormError("Stage is required.");
+      return;
+    }
+    if (!verdict) {
+      setFormError("Verdict is required.");
       return;
     }
     if (trimmedNotes.length === 0) {
@@ -963,8 +969,11 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                   className="border rounded px-3 py-2 text-sm"
                   value={verdict}
                   onChange={(e) => setVerdict(e.target.value)}
+                  required
                 >
-                  <option value="">No verdict</option>
+                  <option value="" disabled>
+                    Select verdict
+                  </option>
                   <option value="shortlist">Shortlist</option>
                   <option value="hold">Hold</option>
                   <option value="reject">Reject</option>
@@ -979,9 +988,13 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                   inputMode="numeric"
                 />
                 <button
-                  className="px-3 py-2 rounded text-white bg-gradient-to-r from-orange-500 to-pink-600 text-sm"
+                  className={`px-3 py-2 rounded text-white text-sm ${
+                    !verdict
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-orange-500 to-pink-600"
+                  }`}
                   onClick={save}
-                  disabled={saving}
+                  disabled={saving || !verdict}
                 >
                   {saving ? "Saving..." : "Save"}
                 </button>
@@ -1021,6 +1034,99 @@ export default function ScreeningClient({ appId }: { appId: number }) {
                 </h3>
                 <div className="text-sm text-gray-500">
                   {notes.length} total evaluation{notes.length !== 1 ? "s" : ""}
+                </div>
+              </div>
+              <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-700">
+                    Interview process
+                  </label>
+                  <select
+                    className="border rounded px-2 py-1 text-sm"
+                    value={app?.interviewProcess || "started"}
+                    onChange={async (e) => {
+                      const interviewProcess = e.target.value;
+                      await fetch(`/api/admin/applications/${appId}/decision`, {
+                        method: "POST",
+                        headers: { "content-type": "application/json" },
+                        body: JSON.stringify({ interviewProcess }),
+                      });
+                      setApp((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              interviewProcess:
+                                interviewProcess as FullApplication["interviewProcess"],
+                            }
+                          : prev
+                      );
+                    }}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="started">Started</option>
+                    <option value="in_progress">In progress</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 sm:justify-end">
+                  <label className="text-sm text-gray-700">
+                    Final decision
+                  </label>
+                  <select
+                    className="border rounded px-2 py-1 text-sm"
+                    value={app?.result || ""}
+                    title={"Will unlock when all five stages completed!"}
+                    onChange={async (e) => {
+                      const next = e.target.value || null;
+                      if (next === "hired" || next === "reject") {
+                        const ok = window.confirm(
+                          `Are you sure you want to mark this candidate as ${next.toUpperCase()}? This will lock further edits.`
+                        );
+                        if (!ok) return;
+                      }
+                      await fetch(`/api/admin/applications/${appId}/decision`, {
+                        method: "POST",
+                        headers: { "content-type": "application/json" },
+                        body: JSON.stringify({ result: next }),
+                      });
+                      setApp((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              result: next as FullApplication["result"],
+                              interviewProcess:
+                                next && next !== "hold"
+                                  ? "completed"
+                                  : prev.interviewProcess || "started",
+                            }
+                          : prev
+                      );
+                    }}
+                    disabled={
+                      // Disable until all five stages have at least one note
+                      (() => {
+                        const required: StageKey[] = [
+                          "hr",
+                          "technical",
+                          "manager",
+                          "team",
+                          "reference",
+                        ];
+                        const present = new Set(
+                          notes.map((n) => n.stage as StageKey)
+                        );
+                        const allDone = required.every((s) => present.has(s));
+                        const finalized =
+                          app?.result === "hired" || app?.result === "reject";
+                        return !allDone || finalized;
+                      })()
+                    }
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="hired">Hired</option>
+                    <option value="hold">Hold</option>
+                    <option value="reject">Reject</option>
+                  </select>
                 </div>
               </div>
               <div className="space-y-6">

@@ -19,6 +19,22 @@ enum JobStatus {
   expired
 }
 
+/// Overall interview pipeline status for an application
+enum InterviewProcessStatus {
+  pending
+  started
+  in_progress
+  completed
+}
+
+/// Final disposition of the application
+enum ApplicationResult {
+  pending
+  hired
+  hold
+  reject
+}
+
 model Job {
   id                      Int           @id @default(autoincrement())
   title                   String
@@ -52,12 +68,12 @@ model Job {
 }
 
 model Application {
-  id                         Int             @id @default(autoincrement())
+  id                         Int                    @id @default(autoincrement())
   jobId                      Int
-  job                        Job             @relation(fields: [jobId], references: [id])
+  job                        Job                    @relation(fields: [jobId], references: [id])
   userEmail                  String
   userName                   String?
-  profileImage               String?         @db.Text
+  profileImage               String?                @db.Text
   gender                     String
   dateOfBirth                String
   mobileNo                   String
@@ -74,14 +90,16 @@ model Application {
   workedAlready              Boolean
   companyName                String?
   skills                     Json
-  resumeUrl                  String?         @db.Text
-  reasonToJoin               String          @db.Text
-  excitedAboutStartup        String          @db.Text
+  resumeUrl                  String?                @db.Text
+  reasonToJoin               String                 @db.Text
+  excitedAboutStartup        String                 @db.Text
   cameFrom                   String
   acceptCondition            Boolean
   totalScore                 Int? // Overall score from all screening stages
-  createdAt                  DateTime        @default(now())
-  updatedAt                  DateTime        @updatedAt
+  interviewProcess           InterviewProcessStatus @default(started)
+  result                     ApplicationResult?
+  createdAt                  DateTime               @default(now())
+  updatedAt                  DateTime               @updatedAt
   ScreeningNote              ScreeningNote[]
 }
 

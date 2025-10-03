@@ -111,5 +111,31 @@ export async function POST(
   // Calculate total score if all stages are complete
   await calculateAndUpdateTotalScore(appId);
 
+  // Auto-progress interview process
+  try {
+    const allStages = ["hr", "technical", "manager", "team", "reference"]; // keep in sync
+    const latestPerStage = await prisma.screeningNote.groupBy({
+      by: ["stage"],
+      where: { applicationId: appId },
+      _max: { createdAt: true },
+    });
+    const completedCount = latestPerStage.filter((g) =>
+      allStages.includes(g.stage)
+    ).length;
+    await prisma.application.update({
+      where: { id: appId },
+      data: {
+        interviewProcess:
+          completedCount >= allStages.length
+            ? "completed"
+            : completedCount > 0
+            ? "in_progress"
+            : "started",
+      },
+    });
+  } catch (e) {
+    // best effort; ignore
+  }
+
   return NextResponse.json(result, { status: existing ? 200 : 201 });
 }

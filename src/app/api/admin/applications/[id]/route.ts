@@ -65,6 +65,8 @@ export async function GET(
       excitedAboutStartup: application.excitedAboutStartup,
       cameFrom: application.cameFrom,
       acceptCondition: application.acceptCondition,
+      interviewProcess: application.interviewProcess,
+      result: application.result,
       createdAt: application.createdAt.toISOString(),
     });
   } catch (error) {
