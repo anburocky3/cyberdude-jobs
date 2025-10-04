@@ -47,6 +47,8 @@ async function seedAdminsFromEnv() {
       name: adminName,
       passwordHash,
       isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   });
 }
@@ -67,6 +69,8 @@ async function seedAdminsFromFile() {
         name: a.name ?? null,
         passwordHash,
         isActive: a.isActive ?? true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
   }
