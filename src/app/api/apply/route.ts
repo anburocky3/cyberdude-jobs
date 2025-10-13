@@ -130,6 +130,8 @@ export async function POST(request: Request) {
         acceptCondition:
           String(fields.acceptCondition) === "true" ||
           fields.acceptCondition === true,
+        updatedAt: new Date(),
+        createdAt: new Date(),
       },
     });
 

@@ -7,7 +7,7 @@ async function calculateAndUpdateTotalScore(applicationId: number) {
   const stages = ["hr", "technical", "manager", "team", "reference"];
 
   // Get all screening notes for this application
-  const allNotes = await prisma.screeningNote.findMany({
+  const allNotes = await prisma.screeningnote.findMany({
     where: { applicationId },
   });
 
@@ -60,7 +60,7 @@ export async function GET(
       { status: 400 }
     );
   }
-  const notes = await prisma.screeningNote.findMany({
+  const notes = await prisma.screeningnote.findMany({
     where: { applicationId: appId },
     orderBy: { createdAt: "desc" },
   });
@@ -91,20 +91,29 @@ export async function POST(
   const createdBy = session.user?.email || session.user?.name || "admin";
 
   // Only one evaluation per stage: update if exists, else create
-  const existing = await prisma.screeningNote.findFirst({
+  const existing = await prisma.screeningnote.findFirst({
     where: { applicationId: appId, stage },
     orderBy: { createdAt: "desc" },
   });
 
   let result;
   if (existing) {
-    result = await prisma.screeningNote.update({
+    result = await prisma.screeningnote.update({
       where: { id: existing.id },
       data: { verdict, score, notes, createdBy },
     });
   } else {
-    result = await prisma.screeningNote.create({
-      data: { applicationId: appId, stage, verdict, score, notes, createdBy },
+    result = await prisma.screeningnote.create({
+      data: {
+        applicationId: appId,
+        stage,
+        verdict,
+        score,
+        notes,
+        createdBy,
+        updatedAt: new Date(),
+        createdAt: new Date(),
+      },
     });
   }
 
@@ -114,7 +123,7 @@ export async function POST(
   // Auto-progress interview process
   try {
     const allStages = ["hr", "technical", "manager", "team", "reference"]; // keep in sync
-    const latestPerStage = await prisma.screeningNote.groupBy({
+    const latestPerStage = await prisma.screeningnote.groupBy({
       by: ["stage"],
       where: { applicationId: appId },
       _max: { createdAt: true },
@@ -133,7 +142,7 @@ export async function POST(
             : "started",
       },
     });
-  } catch (e) {
+  } catch {
     // best effort; ignore
   }
 

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import type {
   Prisma,
   JobType,
-  InterviewProcessStatus,
+  ApplicationInterviewProcess,
   ApplicationResult,
 } from "@prisma/client";
 
@@ -42,7 +42,8 @@ export async function GET(request: Request) {
       interiewProcessParam
     )
   ) {
-    where.interviewProcess = interiewProcessParam as InterviewProcessStatus;
+    where.interviewProcess =
+      interiewProcessParam as ApplicationInterviewProcess;
   }
   if (
     resultParam &&

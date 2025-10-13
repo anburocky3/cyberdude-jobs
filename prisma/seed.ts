@@ -59,6 +59,8 @@ async function main() {
         skills: job.skills ?? Prisma.JsonNull,
         openings: job.openings ?? null,
         slug: job.slug,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
   }

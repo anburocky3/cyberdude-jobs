@@ -4,13 +4,14 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!(session && session.user && session.user.isAdmin)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const id = Number(params.id);
+  const { id: idStr } = await params;
+  const id = Number(idStr);
   if (!id) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
 
   const body = await request.json();
@@ -44,13 +45,14 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!(session && session.user && session.user.isAdmin)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const id = Number(params.id);
+  const { id: idStr } = await params;
+  const id = Number(idStr);
   if (!id) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
 
   const slot = await prisma.interviewSlot.findUnique({ where: { id } });

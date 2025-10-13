@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { InterviewAvailability, InterviewSlot } from "@prisma/client";
 
 export default function AdminInterviewsPage() {
-  const { data } = useSession();
+  // const { data } = useSession();
   const [date, setDate] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
