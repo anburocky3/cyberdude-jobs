@@ -1,5 +1,3 @@
-// Prisma schema for jobs
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,6 +5,135 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique(map: "ux_admins_email") @map("email") @db.VarChar(255)
+  name         String?  @map("name") @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @map("updated_at")
+
+  @@map("admins")
+}
+
+model Application {
+  id                         Int                         @id @default(autoincrement())
+  jobId                      Int                         @map("job_id")
+  userEmail                  String                      @map("user_email")
+  userName                   String?                     @map("user_name")
+  profileImage               String?                     @map("profile_image") @db.Text
+  gender                     String                      @map("gender")
+  dateOfBirth                String                      @map("date_of_birth")
+  mobileNo                   String                      @map("mobile_no")
+  currentStatus              String                      @map("current_status")
+  country                    String                      @map("country")
+  state                      String                      @map("state")
+  city                       String                      @map("city")
+  linkedin                   String                      @map("linkedin")
+  portfolio                  String?                     @map("portfolio")
+  educationSchool            String                      @map("education_school")
+  educationSchoolPercentage  Float                       @map("education_school_percentage")
+  educationCollege           String                      @map("education_college")
+  educationCollegePercentage Float                       @map("education_college_percentage")
+  workedAlready              Boolean                     @map("worked_already")
+  companyName                String?                     @map("company_name")
+  skills                     Json                        @map("skills")
+  resumeUrl                  String?                     @map("resume_url") @db.Text
+  reasonToJoin               String                      @map("reason_to_join") @db.Text
+  excitedAboutStartup        String                      @map("excited_about_startup") @db.Text
+  cameFrom                   String                      @map("came_from")
+  acceptCondition            Boolean                     @map("accept_condition")
+  totalScore                 Int?                        @map("total_score")
+  interviewProcess           ApplicationInterviewProcess @default(started) @map("interview_process")
+  result                     ApplicationResult?          @map("result")
+  createdAt                  DateTime                    @default(now()) @map("created_at")
+  updatedAt                  DateTime                    @map("updated_at")
+  job                        Job                         @relation(fields: [jobId], references: [id], map: "fk_applications_job_id")
+  screeningnote              screeningnote[]
+
+  @@index([jobId], map: "ix_applications_job_id")
+  @@map("applications")
+}
+
+model InterviewAvailability {
+  id            Int             @id @default(autoincrement())
+  date          DateTime        @map("date")
+  startTime     DateTime        @map("start_time")
+  endTime       DateTime        @map("end_time")
+  slotMinutes   Int             @default(20) @map("slot_minutes")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @map("updated_at")
+  interviewslot InterviewSlot[]
+
+  @@map("interview_availabilities")
+}
+
+model InterviewSlot {
+  id                    Int                   @id @default(autoincrement())
+  availabilityId        Int                   @map("availability_id")
+  startsAt              DateTime              @unique(map: "ux_interview_slots_starts_at") @map("starts_at")
+  endsAt                DateTime              @map("ends_at")
+  bookedByEmail         String?               @map("booked_by_email")
+  applicationId         Int?                  @map("application_id")
+  createdAt             DateTime              @default(now()) @map("created_at")
+  updatedAt             DateTime              @map("updated_at")
+  interviewavailability InterviewAvailability @relation(fields: [availabilityId], references: [id], map: "fk_interview_slots_availability_id")
+
+  @@index([availabilityId], map: "ix_interview_slots_availability_id")
+  @@map("interview_slots")
+}
+
+model Job {
+  id                      Int           @id @default(autoincrement())
+  title                   String        @map("title")
+  company                 String        @map("company")
+  location                String        @map("location")
+  type                    JobType       @map("type")
+  workSchedule            String?       @map("work_schedule") @db.VarChar(255)
+  workMode                String        @map("work_mode") @db.VarChar(255)
+  compensation            String?       @map("compensation") @db.Text
+  description             String        @map("description") @db.Text
+  overview                String?       @map("overview") @db.Text
+  responsibilities        Json?         @map("responsibilities")
+  minQualifications       Json?         @map("min_qualifications")
+  preferredQualifications Json?         @map("preferred_qualifications")
+  perks                   Json?         @map("perks")
+  team                    String?       @map("team") @db.VarChar(255)
+  startingDate            String?       @map("starting_date") @db.VarChar(255)
+  minDuration             String?       @map("min_duration") @db.VarChar(64)
+  expectedStipend         String?       @map("expected_stipend") @db.VarChar(255)
+  lastDate                String?       @map("last_date") @db.VarChar(64)
+  applicationDeadline     String?       @map("application_deadline") @db.VarChar(64)
+  status                  JobStatus?    @map("status")
+  postedDate              String?       @map("posted_date") @db.VarChar(64)
+  whoCanApply             String?       @map("who_can_apply") @db.Text
+  skills                  Json?         @map("skills")
+  openings                Int?          @map("openings")
+  slug                    String        @unique(map: "ux_jobs_slug") @map("slug")
+  createdAt               DateTime      @default(now()) @map("created_at")
+  updatedAt               DateTime      @map("updated_at")
+  application             Application[]
+
+  @@map("jobs")
+}
+
+model screeningnote {
+  id            Int         @id @default(autoincrement())
+  applicationId Int         @map("application_id")
+  stage         String      @map("stage") @db.VarChar(64)
+  verdict       String?     @map("verdict") @db.VarChar(32)
+  score         Int?        @map("score")
+  notes         String?     @map("notes") @db.Text
+  createdBy     String?     @map("created_by") @db.VarChar(255)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @map("updated_at")
+  application   Application @relation(fields: [applicationId], references: [id], map: "fk_screening_notes_application_id")
+
+  @@index([applicationId], map: "ix_screening_notes_application_id")
+  @@map("screening_notes")
 }
 
 enum JobType {
@@ -19,113 +146,16 @@ enum JobStatus {
   expired
 }
 
-/// Overall interview pipeline status for an application
-enum InterviewProcessStatus {
+enum ApplicationInterviewProcess {
   pending
   started
   in_progress
   completed
 }
 
-/// Final disposition of the application
 enum ApplicationResult {
   pending
   hired
   hold
   reject
-}
-
-model Job {
-  id                      Int           @id @default(autoincrement())
-  title                   String
-  company                 String
-  location                String
-  type                    JobType
-  workSchedule            String?       @db.VarChar(255)
-  workMode                String        @db.VarChar(255)
-  compensation            String?       @db.Text
-  description             String        @db.Text
-  overview                String?       @db.Text
-  responsibilities        Json?
-  minQualifications       Json?
-  preferredQualifications Json?
-  perks                   Json?
-  team                    String?       @db.VarChar(255)
-  startingDate            String?       @db.VarChar(255)
-  minDuration             String?       @db.VarChar(64)
-  expectedStipend         String?       @db.VarChar(255)
-  lastDate                String?       @db.VarChar(64)
-  applicationDeadline     String?       @db.VarChar(64)
-  status                  JobStatus?
-  postedDate              String?       @db.VarChar(64)
-  whoCanApply             String?       @db.Text
-  skills                  Json?
-  openings                Int?
-  slug                    String        @unique
-  createdAt               DateTime      @default(now())
-  updatedAt               DateTime      @updatedAt
-  applications            Application[]
-}
-
-model Application {
-  id                         Int                    @id @default(autoincrement())
-  jobId                      Int
-  job                        Job                    @relation(fields: [jobId], references: [id])
-  userEmail                  String
-  userName                   String?
-  profileImage               String?                @db.Text
-  gender                     String
-  dateOfBirth                String
-  mobileNo                   String
-  currentStatus              String
-  country                    String
-  state                      String
-  city                       String
-  linkedin                   String
-  portfolio                  String?
-  educationSchool            String
-  educationSchoolPercentage  Float
-  educationCollege           String
-  educationCollegePercentage Float
-  workedAlready              Boolean
-  companyName                String?
-  skills                     Json
-  resumeUrl                  String?                @db.Text
-  reasonToJoin               String                 @db.Text
-  excitedAboutStartup        String                 @db.Text
-  cameFrom                   String
-  acceptCondition            Boolean
-  totalScore                 Int? // Overall score from all screening stages
-  interviewProcess           InterviewProcessStatus @default(started)
-  result                     ApplicationResult?
-  createdAt                  DateTime               @default(now())
-  updatedAt                  DateTime               @updatedAt
-  ScreeningNote              ScreeningNote[]
-}
-
-/// HR screening notes and status per application
-model ScreeningNote {
-  id            Int         @id @default(autoincrement())
-  applicationId Int
-  application   Application @relation(fields: [applicationId], references: [id])
-  stage         String      @db.VarChar(64) // hr | technical | manager | team
-  verdict       String?     @db.VarChar(32) // shortlist | hold | reject
-  score         Int? // 0-100
-  notes         String?     @db.Text
-  createdBy     String?     @db.VarChar(255)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  @@index([applicationId])
-}
-
-/// Admin users who can access the admin dashboard
-model Admin {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique @db.VarChar(255)
-  name         String?  @db.VarChar(255)
-  passwordHash String   @db.VarChar(255)
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 }
