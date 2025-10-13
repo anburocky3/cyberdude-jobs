@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2Icon, Timer } from "lucide-react";
+import { Building2Icon, LucideCalendar, Timer } from "lucide-react";
 
 type Note = {
   id: number;
@@ -88,7 +88,16 @@ export default function ApplicationsPage() {
 
   return (
     <main className="container mx-auto py-6 px-4">
-      <h1 className="text-2xl font-bold mb-4">Your Applications</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold mb-4">Your Applications</h1>
+        <Link
+          href="/interviews/schedule"
+          className="px-4 py-2 bg-blue-700 text-white rounded flex items-center gap-2 hover:bg-blue-800 font-medium"
+        >
+          <LucideCalendar className="h-4 w-4 inline-block" />
+          <span className="hidden md:inline">Schedule Interview</span>
+        </Link>
+      </div>
       {error && (
         <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2 mb-4">
           Failed to load applications

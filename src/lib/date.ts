@@ -19,7 +19,7 @@ export function fromNow(dateInput?: string | null): string {
 }
 
 export function formatDate(
-  dateInput?: string | null,
+  dateInput?: string | null | Date,
   format: string = "DD/MM/YYYY"
 ): string {
   if (!dateInput) return "—";

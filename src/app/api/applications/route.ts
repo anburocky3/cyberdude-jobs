@@ -23,7 +23,7 @@ export async function GET() {
           company: true,
         },
       },
-      ScreeningNote: {
+      screeningnote: {
         orderBy: { createdAt: "desc" },
         select: {
           id: true,
@@ -47,7 +47,7 @@ export async function GET() {
       interviewProcess: (a as unknown as { interviewProcess?: string })
         .interviewProcess,
       result: (a as unknown as { result?: string }).result,
-      notes: a.ScreeningNote.map((n) => ({
+      notes: a.screeningnote.map((n) => ({
         id: n.id,
         stage: n.stage,
         verdict: n.verdict,

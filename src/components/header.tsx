@@ -1,7 +1,12 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOutIcon, LucideLayoutDashboard, UserIcon } from "lucide-react";
+import {
+  LogOutIcon,
+  LucideCalendar,
+  LucideLayoutDashboard,
+  UserIcon,
+} from "lucide-react";
 import { useSession, signOut, signIn } from "next-auth/react";
 import { LinkedinIcon } from "@/components/icons/linkedin";
 import { usePathname } from "next/navigation";
@@ -90,10 +95,17 @@ export function Header() {
             <div className="flex items-center space-x-2">
               <Link
                 href="/admin"
-                className="bg-zinc-900 text-white rounded-md px-4 py-2 sm:py-1 flex items-center "
+                className="rounded-md px-4 py-2 sm:py-1 flex items-center hover:text-orange-600"
               >
-                <LucideLayoutDashboard className="sm:mr-1 h-4 w-4" />
+                <LucideLayoutDashboard className="sm:mr-2 h-4 w-4" />
                 <span className="hidden md:inline-flex">Dashboard</span>
+              </Link>
+              <Link
+                href="/admin/interviews"
+                className="rounded-md px-4 py-2 sm:py-1 flex items-center hover:text-orange-600"
+              >
+                <LucideCalendar className="sm:mr-2 h-4 w-4" />
+                <span className="hidden md:inline-flex">Interviews</span>
               </Link>
               <span className="hidden md:inline-flex">
                 Hello {session.user.name || "Admin"}
