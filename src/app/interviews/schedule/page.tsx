@@ -115,6 +115,7 @@ export default function ScheduleInterviewPage() {
               dateStyle: "medium",
               timeStyle: "short",
               hour12: true,
+              timeZone: "UTC",
             })}
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -271,26 +272,6 @@ export default function ScheduleInterviewPage() {
                 ))}
               </select>
             </div>
-
-            {selectedApp && (
-              <div className="text-sm text-gray-700 flex flex-col sm:flex-row sm:items-center gap-2 sm:ml-2">
-                <a
-                  href={`/jobs/${selectedApp.job.slug}`}
-                  target="_blank"
-                  className="underline underline-offset-2"
-                >
-                  View job
-                </a>
-                <span className="hidden sm:inline">·</span>
-                <a
-                  href="/applications"
-                  target="_blank"
-                  className="underline underline-offset-2"
-                >
-                  View your application
-                </a>
-              </div>
-            )}
           </div>
         </>
       )}
@@ -317,7 +298,8 @@ export default function ScheduleInterviewPage() {
                 <div>
                   {formatDate(
                     appBookedSlot.startsAt as unknown as string,
-                    "DD MMM YYYY, hh:mm:a"
+                    "DD MMM YYYY, hh:mm:a",
+                    true
                   )}{" "}
                   · Google Meet -{" "}
                   <a href={meetLink} target="_blank" className="font-semibold">
@@ -380,7 +362,8 @@ export default function ScheduleInterviewPage() {
                       const ok = window.confirm(
                         `Are you sure you want to book this slot on ${formatDate(
                           s.startsAt,
-                          "MMM DD - YYYY @ hh:mm:a"
+                          "MMM DD - YYYY @ hh:mma",
+                          true
                         )}? This can't be changed in future.`
                       );
                       if (ok) {
@@ -429,13 +412,15 @@ export default function ScheduleInterviewPage() {
                       className="font-semibold"
                       title={`Book slot on ${formatDate(
                         s.startsAt,
-                        "DD MMM YYYY, hh:mm:a"
+                        "DD MMM YYYY, hh:mma",
+                        true
                       )}`}
                     >
                       {new Date(s.startsAt).toLocaleTimeString(undefined, {
                         hour: "numeric",
                         minute: "2-digit",
                         hour12: true,
+                        timeZone: "UTC",
                       })}
                     </div>
                   </button>

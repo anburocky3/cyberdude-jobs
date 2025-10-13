@@ -110,8 +110,8 @@ export default function AdminInterviewsPage() {
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify({
                   date,
-                  startTime: `${date}T${start}`,
-                  endTime: `${date}T${end}`,
+                  startTime: new Date(`${date}T${start}`).toISOString(),
+                  endTime: new Date(`${date}T${end}`).toISOString(),
                   slotMinutes,
                 }),
               });
@@ -145,16 +145,18 @@ export default function AdminInterviewsPage() {
             <div className="font-medium">
               {new Date(it.date).toDateString()} •{" "}
               <span className="bg-indigo-500 px-2 py-1 rounded-full text-white text-sm mr-2">
-                {new Date(it.startTime).toLocaleTimeString(undefined, {
+                {new Date(`${it.startTime}`).toLocaleTimeString(undefined, {
                   hour: "numeric",
                   minute: "2-digit",
                   hour12: true,
+                  timeZone: "UTC",
                 })}{" "}
                 -{" "}
-                {new Date(it.endTime).toLocaleTimeString(undefined, {
+                {new Date(`${it.endTime}`).toLocaleTimeString(undefined, {
                   hour: "numeric",
                   minute: "2-digit",
                   hour12: true,
+                  timeZone: "UTC",
                 })}{" "}
               </span>
               ({it.slotMinutes}m)
@@ -178,12 +180,14 @@ export default function AdminInterviewsPage() {
                         hour: "numeric",
                         minute: "2-digit",
                         hour12: true,
+                        timeZone: "UTC",
                       })}{" "}
                       -{" "}
                       {new Date(s.endsAt).toLocaleTimeString(undefined, {
                         hour: "numeric",
                         minute: "2-digit",
                         hour12: true,
+                        timeZone: "UTC",
                       })}{" "}
                       {s.bookedByEmail && (
                         <span className="block truncate">
@@ -216,6 +220,7 @@ export default function AdminInterviewsPage() {
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
+                                  timeZone: "UTC",
                                 })
                                 .slice(0, 5)
                             );
@@ -227,6 +232,7 @@ export default function AdminInterviewsPage() {
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   hour12: false,
+                                  timeZone: "UTC",
                                 })
                                 .slice(0, 5)
                             );
@@ -258,13 +264,16 @@ export default function AdminInterviewsPage() {
                         </button>
                       </div>
                       <div className="w-full ">
-                        <a
-                          href={`/admin/applications/${s.applicationId}`}
-                          target="_blank"
-                          className="px-9 py-0.5 rounded border hover:bg-indigo-400 hover:text-white text-xs w-full"
-                        >
-                          View
-                        </a>
+                        {s.applicationId && (
+                          <a
+                            href={`/admin/applications/${s.applicationId}`}
+                            target="_blank"
+                            className={`px-9 py-0.5 rounded border hover:bg-indigo-400 hover:text-white text-xs w-full
+                            `}
+                          >
+                            View
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>
